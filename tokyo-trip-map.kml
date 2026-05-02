@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>도쿄여행 후보지 지도</name>
+    <description>2026-05-30부터 2026-06-02까지의 도쿄여행 후보지, 전제조건, 예약/날씨/혼잡 정보를 한국어로 정리한 Google My Maps 가져오기용 KML입니다.</description>
+    <Style id="airport"><IconStyle><color>ffbe6630</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/blu-circle.png</href></Icon></IconStyle></Style>
+    <Style id="transit"><IconStyle><color>ff6d6154</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/wht-circle.png</href></Icon></IconStyle></Style>
+    <Style id="view"><IconStyle><color>ff586f25</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href></Icon></IconStyle></Style>
+    <Style id="photo"><IconStyle><color>ff1f6bd6</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href></Icon></IconStyle></Style>
+    <Style id="theme"><IconStyle><color>ff2f3ab8</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle></Style>
+    <Style id="foodshop"><IconStyle><color>ff346f8a</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/orange-circle.png</href></Icon></IconStyle></Style>
+    <Style id="daytrip"><IconStyle><color>ff9e4d7c</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/purple-circle.png</href></Icon></IconStyle></Style>
+
+    <Folder>
+      <name>공항/이동</name>
+      <Placemark>
+        <name>나리타공항 T1</name>
+        <styleUrl>#airport</styleUrl>
+        <description><![CDATA[카테고리: 공항/이동<br>추천일: 5/30, 6/2<br>설명: Jin Air는 나리타 T1 North Wing / 4F. 귀국일 15:30-16:00 도착 목표.<br>예약 필요: 항공편/터미널 재확인<br>날씨 영향: 낮음<br>웨이팅/혼잡: 출국 2.5-3시간 여유<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Narita+Airport+Terminal+1">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>140.3929,35.7719,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>교통 거점</name>
+      <Placemark>
+        <name>게이세이 우에노</name>
+        <styleUrl>#transit</styleUrl>
+        <description><![CDATA[카테고리: 교통 거점<br>추천일: 숙소 후보<br>설명: 스카이라이너 이용 시 공항 접근 우수. 우에노/닛포리 숙소면 귀국이 편함.<br>예약 필요: 스카이라이너 좌석<br>날씨 영향: 낮음<br>웨이팅/혼잡: 출퇴근 시간 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Keisei+Ueno+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7734,35.7117,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>신주쿠</name>
+        <styleUrl>#transit</styleUrl>
+        <description><![CDATA[카테고리: 교통 거점<br>추천일: 숙소 1순위<br>설명: 포케파크, 해리포터, 후지산 렌터카 픽업/반납 접근 균형이 좋음.<br>예약 필요: 숙소/렌터카 조기 예약<br>날씨 영향: 낮음<br>웨이팅/혼잡: 역 구조 복잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Shinjuku+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7006,35.6896,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>전망/야경</name>
+      <Placemark>
+        <name>시부야 스카이</name>
+        <styleUrl>#view</styleUrl>
+        <description><![CDATA[카테고리: 전망/야경<br>추천일: 5/30<br>설명: 일몰/야경 핵심. 옥상은 날씨에 민감하고 반입 제한 있음.<br>예약 필요: 필수: 일몰 슬롯<br>날씨 영향: 높음: 옥상 폐쇄 가능<br>웨이팅/혼잡: 인기 시간대 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=SHIBUYA+SKY">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7020,35.6585,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>롯폰기 힐스 모리타워</name>
+        <styleUrl>#view</styleUrl>
+        <description><![CDATA[카테고리: 전망/야경<br>추천일: 5/30<br>설명: 도쿄타워를 내려다보는 전망 후보. 시부야 스카이와 중복되므로 하나만 선택해도 됨.<br>예약 필요: 권장<br>날씨 영향: 중간<br>웨이팅/혼잡: 저녁 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Roppongi+Hills+Mori+Tower">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7292,35.6604,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>아자부다이 힐스</name>
+        <styleUrl>#view</styleUrl>
+        <description><![CDATA[카테고리: 전망/야경<br>추천일: 5/30<br>설명: 도쿄타워/롯폰기 사이에 넣기 좋은 도시 산책 후보.<br>예약 필요: 시설별 확인<br>날씨 영향: 낮음<br>웨이팅/혼잡: 식사 시간 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Azabudai+Hills">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7404,35.6602,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>사진</name>
+      <Placemark>
+        <name>도쿄타워</name>
+        <styleUrl>#photo</styleUrl>
+        <description><![CDATA[카테고리: 사진<br>추천일: 5/30<br>설명: DM에서 반복된 사진 축. 시바공원/조조지/롯폰기와 묶기 좋음.<br>예약 필요: 불필요<br>날씨 영향: 중간<br>웨이팅/혼잡: 야간 사진 대기<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Tokyo+Tower">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7454,35.6586,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>시바공원/조조지</name>
+        <styleUrl>#photo</styleUrl>
+        <description><![CDATA[카테고리: 사진<br>추천일: 5/30<br>설명: 도쿄타워 배경 사진 안정픽. 날씨 리스크가 비교적 낮음.<br>예약 필요: 불필요<br>날씨 영향: 중간<br>웨이팅/혼잡: 주말 관광객<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Zojoji+Temple+Tokyo">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7482,35.6574,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>세븐일레븐 미나토구 시바 3초메</name>
+        <styleUrl>#photo</styleUrl>
+        <description><![CDATA[카테고리: 사진<br>추천일: 5/30<br>설명: 인스타 감성 도쿄타워 스팟. 짧게 들르는 용도.<br>예약 필요: 불필요<br>날씨 영향: 중간<br>웨이팅/혼잡: 짧게 촬영<br><a href="https://www.google.com/maps/search/?api=1&amp;query=7-Eleven+Minato+Shiba+3-chome+Tokyo">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7470,35.6518,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>테마</name>
+      <Placemark>
+        <name>포케파크 칸토 / 요미우리랜드</name>
+        <styleUrl>#theme</styleUrl>
+        <description><![CDATA[카테고리: 테마<br>추천일: 5/31 우선<br>설명: 티켓 확보 시 이번 여행의 강한 앵커. 야외/앱/한정 입장권 변수 큼.<br>예약 필요: 필수: 공식 티켓/앱<br>날씨 영향: 높음: 야외/곤돌라<br>웨이팅/혼잡: 매진/한정 입장권<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Pok%C3%A9Park+KANTO+Yomiuriland">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.5171,35.6255,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>해리포터 스튜디오 투어 도쿄</name>
+        <styleUrl>#theme</styleUrl>
+        <description><![CDATA[카테고리: 테마<br>추천일: 5/31 또는 6/1<br>설명: 실내라 비 오는 날 강력. 공식 권장 관람 3-4시간.<br>예약 필요: 필수/권장: 시간권<br>날씨 영향: 낮음: 실내<br>웨이팅/혼잡: 인기 시간 매진<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Warner+Bros.+Studio+Tour+Tokyo">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.6476,35.7420,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>도쿄디즈니리조트</name>
+        <styleUrl>#theme</styleUrl>
+        <description><![CDATA[카테고리: 테마<br>추천일: 선택 시 하루 전체<br>설명: 넣는 순간 하루가 사라지는 일정. 이번 후보들 중 우선순위 조정 필요.<br>예약 필요: 필수: 파크 티켓<br>날씨 영향: 중간<br>웨이팅/혼잡: 대기/체력 소모 큼<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Tokyo+Disney+Resort">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.8804,35.6329,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>팀랩 플래닛 도쿄</name>
+        <styleUrl>#theme</styleUrl>
+        <description><![CDATA[카테고리: 테마<br>추천일: 선택<br>설명: DM에서 과부하 예시로 언급된 후보. 마지막 날 여러 곳과 묶기엔 위험.<br>예약 필요: 권장<br>날씨 영향: 낮음: 실내<br>웨이팅/혼잡: 시간대별 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=teamLab+Planets+Tokyo">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7898,35.6491,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>쇼핑/가벼운 일정</name>
+      <Placemark>
+        <name>아사쿠사 문화관광센터</name>
+        <styleUrl>#foodshop</styleUrl>
+        <description><![CDATA[카테고리: 쇼핑/가벼운 일정<br>추천일: 6/2 후보<br>설명: 무료 전망/아사쿠사 산책. 공항 가기 전 한 곳만 볼 때 좋음.<br>예약 필요: 불필요<br>날씨 영향: 중간<br>웨이팅/혼잡: 낮 시간 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Asakusa+Culture+Tourist+Information+Center">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7966,35.7107,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>긴자 식스</name>
+        <styleUrl>#foodshop</styleUrl>
+        <description><![CDATA[카테고리: 쇼핑/가벼운 일정<br>추천일: 6/2 후보<br>설명: 쇼핑/카페/선물 구매에 적합. 공항 이동 전 과소비와 시간 초과 주의.<br>예약 필요: 식당은 권장<br>날씨 영향: 낮음<br>웨이팅/혼잡: 쇼핑 시간 초과 주의<br><a href="https://www.google.com/maps/search/?api=1&amp;query=GINZA+SIX">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7643,35.6697,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>아키하바라</name>
+        <styleUrl>#foodshop</styleUrl>
+        <description><![CDATA[카테고리: 쇼핑/가벼운 일정<br>추천일: 6/2 후보<br>설명: 굿즈/전자상가/가벼운 쇼핑. 우에노/닛포리 숙소와 궁합 좋음.<br>예약 필요: 불필요<br>날씨 영향: 낮음<br>웨이팅/혼잡: 쇼핑 시간 제한<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Akihabara+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.7730,35.6984,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>근교</name>
+      <Placemark>
+        <name>가마쿠라역</name>
+        <styleUrl>#daytrip</styleUrl>
+        <description><![CDATA[카테고리: 근교<br>추천일: 6/1 대체<br>설명: 에노덴/바다/감성 산책. 후지산 흐린 날 대체로 좋음.<br>예약 필요: 불필요<br>날씨 영향: 중간<br>웨이팅/혼잡: 주말 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Kamakura+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.5504,35.3192,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>에노시마</name>
+        <styleUrl>#daytrip</styleUrl>
+        <description><![CDATA[카테고리: 근교<br>추천일: 6/1 대체<br>설명: 가마쿠라와 묶는 일몰 후보. 바람/비 영향.<br>예약 필요: 불필요<br>날씨 영향: 중간-높음<br>웨이팅/혼잡: 일몰 전 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Enoshima+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>139.4876,35.3110,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>가와구치코역</name>
+        <styleUrl>#daytrip</styleUrl>
+        <description><![CDATA[카테고리: 근교<br>추천일: 6/1 맑은 날<br>설명: 후지산 당일치기 기본 거점. 신주쿠에서 차로 약 1시간45분-2시간30분, 보이지 않으면 만족도 급락.<br>예약 필요: 신주쿠 렌터카/주차 확인<br>날씨 영향: 매우 높음<br>웨이팅/혼잡: 주차/관광지 혼잡<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Kawaguchiko+Station">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>138.7688,35.4982,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>아라쿠라야마 센겐공원</name>
+        <styleUrl>#daytrip</styleUrl>
+        <description><![CDATA[카테고리: 근교<br>추천일: 6/1 맑은 날<br>설명: 후지산+오층탑 사진 명소. 가와구치코에서 차로 약 15-25분.<br>예약 필요: 주차장 확인<br>날씨 영향: 매우 높음<br>웨이팅/혼잡: 주차/계단/사진 대기<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Arakurayama+Sengen+Park">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>138.8010,35.5013,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>후지산 꿈의대교</name>
+        <styleUrl>#daytrip</styleUrl>
+        <description><![CDATA[카테고리: 근교<br>추천일: 6/1 선택<br>설명: DM 공유 사진 스팟. 가와구치코와 방향이 달라 추가 시 왕복 부담이 크게 늘어나는 선택 코스.<br>예약 필요: 주차/동선 확인<br>날씨 영향: 매우 높음<br>웨이팅/혼잡: 지역 매너/주차 주의<br><a href="https://www.google.com/maps/search/?api=1&amp;query=Fujisan+Yumeno+Ohashi+Bridge">Google Maps에서 열기</a>]]></description>
+        <Point><coordinates>138.6876,35.1543,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

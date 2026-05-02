@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>도쿄여행 요구사항 취합 및 동선 리포트</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #66746c;
+      --paper: #fbf7ef;
+      --panel: rgba(255, 252, 245, 0.92);
+      --line: #dfd4c0;
+      --green: #256f58;
+      --blue: #3066be;
+      --orange: #d66b1f;
+      --red: #b83a2f;
+      --violet: #7c4d9e;
+      --shadow: 0 24px 80px rgba(45, 34, 20, .14);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: ui-serif, "Iowan Old Style", "Apple SD Gothic Neo", "Noto Serif KR", Georgia, serif;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255, 188, 87, .28), transparent 28rem),
+        radial-gradient(circle at 84% 10%, rgba(56, 122, 186, .18), transparent 32rem),
+        linear-gradient(135deg, #fffaf0 0%, #f4ead8 48%, #eaf1ec 100%);
+      line-height: 1.55;
+    }
+
+    a { color: var(--green); font-weight: 700; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 34px 22px 70px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+    .hero-card, .panel {
+      background: var(--panel);
+      border: 1px solid rgba(121, 102, 70, .18);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .hero-card { padding: 34px; position: relative; overflow: hidden; }
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -80px;
+      top: -60px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(45deg, rgba(37, 111, 88, .18) 0 10px, transparent 10px 22px);
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(37, 111, 88, .1);
+      color: var(--green);
+      font: 800 12px/1 ui-sans-serif, system-ui, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 12px;
+      max-width: 840px;
+      font-size: clamp(34px, 5vw, 70px);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+    h2 {
+      margin: 0 0 16px;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+    }
+    h3 { margin: 0 0 10px; font-size: 19px; }
+    .lede { max-width: 820px; color: #435148; font-size: 18px; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 22px;
+    }
+    .fact {
+      min-height: 104px;
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .55);
+      border: 1px solid rgba(121, 102, 70, .14);
+    }
+    .fact b { display: block; font: 800 13px/1.2 ui-sans-serif, system-ui, sans-serif; color: var(--muted); }
+    .fact span { display: block; margin-top: 9px; font-size: 24px; font-weight: 900; letter-spacing: -.03em; }
+    .grid { display: grid; gap: 22px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel { padding: 26px; margin-top: 22px; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .mini {
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid rgba(121, 102, 70, .14);
+      background: rgba(255, 255, 255, .52);
+    }
+    .mini strong { display: block; margin-bottom: 8px; font-size: 17px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 3px 5px 3px 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font: 800 12px/1 ui-sans-serif, system-ui, sans-serif;
+      border: 1px solid rgba(23, 33, 29, .12);
+      background: rgba(255, 255, 255, .58);
+      color: #3e4c44;
+    }
+    .map-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+      min-height: 620px;
+    }
+    #map {
+      min-height: 620px;
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid rgba(121, 102, 70, .24);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
+    }
+    .map-side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 620px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    button.filter {
+      border: 0;
+      cursor: pointer;
+      padding: 10px 13px;
+      border-radius: 999px;
+      font: 900 13px/1 ui-sans-serif, system-ui, sans-serif;
+      background: rgba(255, 255, 255, .72);
+      color: var(--ink);
+      box-shadow: 0 1px 0 rgba(0,0,0,.08);
+    }
+    button.filter.active { background: var(--ink); color: #fffaf0; }
+    .map-actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 16px;
+    }
+    .route-card {
+      display: block;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(121, 102, 70, .16);
+      text-decoration: none;
+      color: var(--ink);
+      box-shadow: 0 10px 30px rgba(45, 34, 20, .08);
+    }
+    .route-card strong { display: block; margin-bottom: 5px; font-size: 15px; }
+    .route-card span { display: block; color: var(--muted); font: 800 12px/1.4 ui-sans-serif, system-ui, sans-serif; }
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .hub-card {
+      overflow: hidden;
+      border-radius: 24px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(121, 102, 70, .16);
+      box-shadow: 0 16px 42px rgba(45, 34, 20, .09);
+    }
+    .hub-map-frame {
+      width: 100%;
+      height: 156px;
+      border: 0;
+      display: block;
+      background: #e8dfcf;
+    }
+    .hub-body { padding: 15px; }
+    .hub-meta {
+      display: inline-flex;
+      margin-bottom: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #fffaf0;
+      background: var(--ink);
+      font: 900 11px/1 ui-sans-serif, system-ui, sans-serif;
+    }
+    .hub-body h3 { margin-bottom: 7px; }
+    .hub-body p { margin: 7px 0 10px; }
+    .hub-note {
+      display: grid;
+      gap: 5px;
+      margin: 10px 0;
+      color: var(--muted);
+      font: 800 12px/1.45 ui-sans-serif, system-ui, sans-serif;
+    }
+    .hub-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+    .hub-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 9px 11px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #fffaf0;
+      background: var(--green);
+      font: 900 12px/1 ui-sans-serif, system-ui, sans-serif;
+    }
+    .hub-link.secondary {
+      color: var(--ink);
+      background: rgba(23, 33, 29, .08);
+      border: 1px solid rgba(23, 33, 29, .12);
+    }
+    .coord-map {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(121, 102, 70, .34);
+    }
+    .coord-map h3 { font-size: 21px; }
+    .export-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+    .export-links a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(37,111,88,.1);
+      border: 1px solid rgba(37,111,88,.18);
+      text-decoration: none;
+      font: 900 12px/1 ui-sans-serif, system-ui, sans-serif;
+    }
+    .place {
+      text-align: left;
+      border: 1px solid rgba(121, 102, 70, .14);
+      background: rgba(255,255,255,.62);
+      border-radius: 18px;
+      padding: 13px;
+      cursor: pointer;
+    }
+    .place:hover { outline: 2px solid rgba(37, 111, 88, .28); }
+    .place .name { font-weight: 900; font-size: 15px; }
+    .place .meta { color: var(--muted); font: 700 12px/1.4 ui-sans-serif, system-ui, sans-serif; margin-top: 4px; }
+    .place .conditions { display: grid; gap: 5px; margin-top: 9px; }
+    .condition {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 9px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.56);
+      font: 800 12px/1.35 ui-sans-serif, system-ui, sans-serif;
+    }
+    .condition b { color: var(--muted); }
+    .condition span { text-align: right; }
+    .ig-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .ig-link {
+      padding: 7px 9px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #7a2f24;
+      background: rgba(214, 107, 31, .12);
+      border: 1px solid rgba(214, 107, 31, .2);
+      font: 900 11px/1 ui-sans-serif, system-ui, sans-serif;
+    }
+    .pin {
+      display: inline-grid;
+      place-items: center;
+      min-width: 46px;
+      max-width: 74px;
+      height: 30px;
+      padding: 0 8px;
+      border-radius: 999px;
+      border: 2px solid white;
+      box-shadow: 0 8px 20px rgba(0,0,0,.22);
+      position: relative;
+      white-space: nowrap;
+    }
+    .pin::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -7px;
+      width: 10px;
+      height: 10px;
+      transform: translateX(-50%) rotate(45deg);
+      background: inherit;
+      border-right: 2px solid white;
+      border-bottom: 2px solid white;
+    }
+    .pin span {
+      color: white;
+      font: 900 12px/1 ui-sans-serif, system-ui, sans-serif;
+      letter-spacing: -.08em;
+      position: relative;
+      z-index: 1;
+    }
+    .popup-photo {
+      display: block;
+      width: 220px;
+      max-width: 100%;
+      margin: 0 0 10px;
+      padding: 0;
+      border: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: zoom-in;
+      background: #eee;
+      box-shadow: 0 10px 24px rgba(0,0,0,.16);
+    }
+    .popup-photo img {
+      display: block;
+      width: 100%;
+      height: 118px;
+      object-fit: cover;
+    }
+    .popup-source {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(23, 33, 29, .78);
+      backdrop-filter: blur(8px);
+    }
+    .image-modal.open { display: flex; }
+    .image-modal-card {
+      width: min(940px, 94vw);
+      max-height: 88vh;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #fffaf0;
+      box-shadow: 0 30px 100px rgba(0,0,0,.35);
+    }
+    .image-modal-card img {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      object-fit: contain;
+      background: #141817;
+    }
+    .image-modal-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 16px;
+      font: 800 13px/1.35 ui-sans-serif, system-ui, sans-serif;
+    }
+    .image-modal-caption button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fffaf0;
+      padding: 9px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .airport { background: var(--blue); }
+    .theme { background: var(--red); }
+    .view { background: var(--green); }
+    .photo { background: var(--orange); }
+    .daytrip { background: var(--violet); }
+    .foodshop { background: #8a6f34; }
+    .transit { background: #54616d; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255,255,255,.58);
+    }
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(121, 102, 70, .16);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font: 900 13px/1.25 ui-sans-serif, system-ui, sans-serif;
+      color: #3f4d45;
+      background: rgba(37, 111, 88, .08);
+    }
+    tr:last-child td { border-bottom: 0; }
+    .score { font-weight: 900; white-space: nowrap; }
+    .winner { color: var(--green); }
+    .risk { color: var(--red); }
+    .timeline { display: grid; gap: 14px; }
+    .day {
+      position: relative;
+      padding: 18px 18px 18px 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.58);
+      border: 1px solid rgba(121, 102, 70, .14);
+    }
+    .day::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 6px;
+      border-radius: 999px;
+      background: linear-gradient(var(--green), var(--orange));
+    }
+    .day-title { font-weight: 950; font-size: 18px; }
+    .small { color: var(--muted); font: 700 13px/1.5 ui-sans-serif, system-ui, sans-serif; }
+    .source-list li { margin: 8px 0; }
+    .leaflet-popup-content { font-family: ui-sans-serif, system-ui, sans-serif; }
+
+    @media (max-width: 980px) {
+      .hero, .grid.two, .grid.three, .map-shell, .cards, .map-actions, .hub-grid { grid-template-columns: 1fr; }
+      .facts { grid-template-columns: 1fr 1fr; }
+      .map-side { max-height: none; }
+    }
+    @media (max-width: 640px) {
+      .wrap { padding: 18px 12px 42px; }
+      .hero-card, .panel { border-radius: 22px; padding: 20px; }
+      .facts { grid-template-columns: 1fr; padding: 14px; }
+      #map { min-height: 520px; }
+      table { font-size: 13px; }
+      th, td { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">Tokyo Trip Decision Report</span>
+        <h1>도쿄여행 요구사항 취합 및 지도형 동선 리포트</h1>
+        <p class="lede">Instagram DM에서 공유된 후보지를 “요구사항”, “지도 위치”, “전제조건”, “추천 일정”으로 재구성했습니다. 핵심은 포케파크/해리포터/전망대/후지산 욕심을 모두 인정하되, 3박 4일 안에서 과부하를 피하는 것입니다.</p>
+      </div>
+      <div class="hero-card facts">
+        <div class="fact"><b>여행 기간</b><span>5/30 토 - 6/2 화</span></div>
+        <div class="fact"><b>도착</b><span>09:55 NRT</span></div>
+        <div class="fact"><b>귀국</b><span>18:25 NRT</span></div>
+        <div class="fact"><b>권장 공항 도착</b><span>15:30-16:00</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>요구사항 취합</h2>
+      <div class="cards">
+        <div class="mini">
+          <strong>테마파크/IP</strong>
+          <span class="tag">포케파크 칸토</span><span class="tag">해리포터 스튜디오</span><span class="tag">디즈니 후보</span>
+          <p class="small">DM 반응상 만족도는 높지만, 하루를 거의 통째로 잡아먹는 후보들입니다.</p>
+        </div>
+        <div class="mini">
+          <strong>전망/야경</strong>
+          <span class="tag">시부야 스카이</span><span class="tag">롯폰기 힐스</span><span class="tag">모리타워</span>
+          <p class="small">예약과 날씨가 성패를 가릅니다. 첫날 저녁에 넣으면 도쿄 도착감이 확 살아납니다.</p>
+        </div>
+        <div class="mini">
+          <strong>사진 스팟</strong>
+          <span class="tag">도쿄타워</span><span class="tag">시바공원</span><span class="tag">세븐일레븐 시바 3초메</span>
+          <p class="small">동선이 가까워 묶기 좋습니다. 날씨가 흐려도 후지산보다는 실패 리스크가 낮습니다.</p>
+        </div>
+        <div class="mini">
+          <strong>근교/자연</strong>
+          <span class="tag">후지산</span><span class="tag">가마쿠라</span><span class="tag">에노시마</span>
+          <p class="small">후지산은 신주쿠 렌터카 왕복 기준으로 봅니다. 예쁘지만 날씨/운전/주차 리스크가 커서 “예보 좋은 날만 실행”이 안전합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>간소화 지도: 여행 판단용 허브</h2>
+      <p class="small">가독성을 위해 메인 지도는 8개 허브만 남겼습니다. 각 카드는 한 장소/권역만 Google Maps로 보여주고, 실제 길찾기는 버튼을 눌러 Google Maps에서 확인하는 방식입니다.</p>
+      <div class="export-links">
+        <a href="./tokyo-trip-map.csv">Google My Maps용 CSV</a>
+        <a href="./tokyo-trip-map.kml">Google My Maps용 KML</a>
+      </div>
+      <div class="map-actions" id="routeActions"></div>
+
+      <div class="hub-grid" aria-label="도쿄여행 핵심 허브 지도 카드">
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="나리타공항 T1 지도" loading="lazy" src="https://maps.google.com/maps?q=35.7719,140.3929&z=10&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">공항</span>
+            <h3>나리타공항 T1</h3>
+            <p>도착/귀국 기준점. 귀국일은 15:30-16:00 도착 목표.</p>
+            <div class="hub-note"><span>Jin Air: T1 North Wing / 4F</span><span>공항 이동은 마지막 날 일정의 하드 데드라인</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+1" target="_blank" rel="noreferrer">Google Maps 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="게이세이 우에노 지도" loading="lazy" src="https://maps.google.com/maps?q=35.7117,139.7734&z=12&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">공항철도</span>
+            <h3>게이세이 우에노</h3>
+            <p>나리타 왕복 편의가 가장 좋은 숙소 후보 권역.</p>
+            <div class="hub-note"><span>스카이라이너 기준 공항 접근 우수</span><span>서쪽 테마 일정은 신주쿠보다 이동 증가</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/place/%EA%B2%8C%EC%9D%B4%EC%84%B8%EC%9D%B4%EC%9A%B0%EC%97%90%EB%85%B8/@35.7375296,139.6743056,12.48z/data=!4m6!3m5!1s0x60188e9e1063ced1:0xbdadd8e08cb00807!8m2!3d35.7111705!4d139.7738941!16s%2Fg%2F1tgq6n4t?entry=ttu" target="_blank" rel="noreferrer">Google Maps 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="신주쿠 지도" loading="lazy" src="https://maps.google.com/maps?q=35.6896,139.7006&z=12&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">숙소 1순위</span>
+            <h3>신주쿠</h3>
+            <p>포케파크, 해리포터, 후지산 렌터카까지 균형이 가장 좋음.</p>
+            <div class="hub-note"><span>6/1 렌터카 픽업/반납 기준점</span><span>역 구조가 복잡하니 숙소 출구 확인 필요</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/search/?api=1&query=Shinjuku+Station" target="_blank" rel="noreferrer">Google Maps 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="도쿄타워 롯폰기 시부야 권역 지도" loading="lazy" src="https://maps.google.com/maps?q=35.6595,139.7245&z=12&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">첫날 야경</span>
+            <h3>도쿄타워·롯폰기·시부야</h3>
+            <p>첫날 저녁에 도쿄 도착감을 가장 잘 만드는 압축 루트.</p>
+            <div class="hub-note"><span>시부야 스카이는 일몰권 사전예매</span><span>도쿄타워 포토스팟은 사진 매너 주의</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/dir/?api=1&origin=Tokyo+Tower&destination=SHIBUYA+SKY&waypoints=Zojoji+Temple%7CRoppongi+Hills+Mori+Tower&travelmode=transit" target="_blank" rel="noreferrer">동선 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="요미우리랜드 포케파크 지도" loading="lazy" src="https://maps.google.com/maps?q=35.6255,139.5171&z=11&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">5/31 우선</span>
+            <h3>요미우리랜드/포케파크</h3>
+            <p>티켓 확보 시 이번 여행의 메인 앵커.</p>
+            <div class="hub-note"><span>공식 티켓, 앱, 한정 입장권 확인</span><span>야외/곤돌라/계단 때문에 날씨 영향 큼</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/dir/?api=1&origin=Shinjuku+Station&destination=Pok%C3%A9Park+KANTO+Yomiuriland&travelmode=transit" target="_blank" rel="noreferrer">동선 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="해리포터 스튜디오 도쿄 지도" loading="lazy" src="https://maps.google.com/maps?q=35.7420,139.6476&z=12&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">비오는 날 강함</span>
+            <h3>해리포터 스튜디오</h3>
+            <p>포케파크 실패/비 예보 시 가장 안정적인 대체 일정.</p>
+            <div class="hub-note"><span>사전예매와 입장 시간 관리 필요</span><span>관람 3-4시간 이상으로 반나절 확보</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/search/?api=1&query=Warner+Bros.+Studio+Tour+Tokyo" target="_blank" rel="noreferrer">Google Maps 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="가와구치코 후지산 지도" loading="lazy" src="https://maps.google.com/maps?q=35.4100,138.7600&z=9&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">6/1 렌터카</span>
+            <h3>가와구치코/후지산</h3>
+            <p>맑은 날만 실행. 신주쿠 렌터카 픽업/반납 기준.</p>
+            <div class="hub-note"><span>신주쿠-가와구치코 약 1시간45분-2시간30분</span><span>국제운전면허증, ETC/톨비, 주차, 좌측통행 필요</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/dir/?api=1&origin=Shinjuku+Station&destination=Shinjuku+Station&waypoints=Kawaguchiko+Station%7CArakurayama+Sengen+Park%7CFujisan+Yumeno+Ohashi+Bridge&travelmode=driving" target="_blank" rel="noreferrer">렌터카 동선 열기</a></div>
+          </div>
+        </article>
+
+        <article class="hub-card">
+          <iframe class="hub-map-frame" title="긴자 지도" loading="lazy" src="https://maps.google.com/maps?q=35.6697,139.7643&z=12&output=embed"></iframe>
+          <div class="hub-body">
+            <span class="hub-meta">6/2 복귀</span>
+            <h3>긴자/공항복귀</h3>
+            <p>마지막 날은 한 곳만 보고 공항으로 가는 안전 루트.</p>
+            <div class="hub-note"><span>쇼핑/식사/짐 찾기 시간 초과 주의</span><span>15:30-16:00 나리타 T1 도착 목표</span></div>
+            <div class="hub-actions"><a class="hub-link" href="https://www.google.com/maps/dir/?api=1&origin=GINZA+SIX&destination=Narita+Airport+Terminal+1&travelmode=transit" target="_blank" rel="noreferrer">공항 동선 열기</a></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="coord-map">
+        <h3>전체 좌표 참고용 지도</h3>
+        <p class="small">아래 지도는 후보지 전체 좌표를 확인하는 보조용입니다. 숙소/동선 판단은 위의 허브 카드와 Google Maps 동선 버튼을 우선 기준으로 보세요.</p>
+        <div class="filters" id="filters"></div>
+        <div class="map-shell">
+          <div id="map"></div>
+          <aside class="map-side" id="placeList"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>포케파크 칸토 vs 해리포터 스튜디오 ADR</h2>
+      <p class="small">Context: 3박 4일, 나리타 왕복, DM상 포켓몬과 해리포터 모두 선호가 있음. Decision Drivers: 예약 성공 가능성, 이동 피로도, 날씨 영향, 비용 예측 가능성, 그룹 전체 만족도.</p>
+      <table>
+        <thead>
+          <tr><th>기준</th><th>포케파크 칸토</th><th>해리포터 스튜디오 투어</th><th>판단</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>핵심 가치</td>
+            <td>2026년 신규/희소성, 포켓몬 팬 만족도 높음. Yomiuriland 내부라 “새로운 곳 간다” 감각이 큼.</td>
+            <td>실내 세트/소품/체험 완성도가 안정적. 해리포터 팬이면 만족도가 예측 가능함.</td>
+            <td class="score winner">희소성은 포케파크, 안정성은 해리포터</td>
+          </tr>
+          <tr>
+            <td>비용</td>
+            <td>공식: Ace/Trainer/Town Pass, 날짜별 변동. 외국인은 공식 영문 티켓 스토어 확인 필요. Town Pass는 2026년 5월 입장분부터 제공.</td>
+            <td>공식 일반 성인권 ¥6,300-¥7,300, 패키지/가이드 옵션은 더 비쌈.</td>
+            <td class="score">비용 예측은 해리포터 우세</td>
+          </tr>
+          <tr>
+            <td>예약 난이도</td>
+            <td>매진/재오픈 가능, 앱/한정 입장권/추첨 또는 선착순 구조. 당일 앱으로 일부 상점/쇼 한정 입장권 신청 필요.</td>
+            <td>공식 웹 사전예매 권장. 원하는 날짜/시간은 매진될 수 있으나 구조는 단순함.</td>
+            <td class="score risk">포케파크 리스크 큼</td>
+          </tr>
+          <tr>
+            <td>날씨 영향</td>
+            <td>야외/숲/계단이 있어 비, 강풍, 더위에 영향. 곤돌라도 강풍 시 중단 가능.</td>
+            <td>대부분 실내. 비 오는 날 대체 일정으로 강함.</td>
+            <td class="score winner">해리포터 우세</td>
+          </tr>
+          <tr>
+            <td>체력/동선</td>
+            <td>신주쿠 기준 서쪽 이동. 포켓몬 숲은 110계단 제한 등 보행 부담 있음.</td>
+            <td>도시 북서쪽 Toshimaen. 공식 권장 관람 3-4시간, 시간 제한은 없음.</td>
+            <td class="score">둘 다 반나절 이상, 포케파크가 체력 변수 큼</td>
+          </tr>
+          <tr>
+            <td>추천 결정</td>
+            <td colspan="3"><strong>포케파크 티켓을 원하는 날짜로 확보하면 포케파크를 우선 채택</strong>. 실패하거나 비 예보/체력 우려가 있으면 해리포터로 전환. 둘 다 넣으려면 후지산 또는 디즈니를 과감히 제외해야 합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>전제조건 매트릭스</h2>
+      <table>
+        <thead>
+          <tr><th>후보</th><th>필수 전제조건</th><th>리스크</th><th>동선 판단</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>시부야 스카이</td><td>입장권 사전예매, 일몰 시간대 선점, 큰 짐 사전 보관</td><td>옥상은 악천후/강풍 시 닫힐 수 있음. 가방/삼각대/모자 등 반입 제한.</td><td>첫날 저녁 추천. 도쿄타워/롯폰기와 묶으면 도시 야경 루트 완성.</td></tr>
+          <tr><td>포케파크 칸토</td><td>공식 티켓 확보, 공식 앱 설치, 당일 한정 입장권 신청</td><td>매진/앱/날씨/계단/강풍 곤돌라 변수.</td><td>하루 메인 일정. 신주쿠 숙소면 접근성 좋음.</td></tr>
+          <tr><td>해리포터 스튜디오</td><td>사전예매, 입장 1시간 전부터 로비 이용 가능</td><td>인기 시간 매진, 관람 3-4시간 이상 소요.</td><td>비 오는 날 최고의 대체안. 포케파크와 같은 날 병행 비추천.</td></tr>
+          <tr><td>후지산/가와구치코</td><td>신주쿠 렌터카 예약, 국제운전면허증, 한국 운전면허증, 여권, 신용카드, ETC/톨비, 주차, 전날 밤-당일 아침 시정/구름 확인</td><td>구름 끼면 핵심 가치 급락. 좌측통행/고속도로/주차/귀경 정체 리스크.</td><td>월요일 날씨가 맑고 운전 컨디션이 좋을 때만 실행. 흐리면 해리포터/가마쿠라로 전환.</td></tr>
+          <tr><td>도쿄타워 포토스팟</td><td>날씨 좋을수록 좋지만 필수는 아님</td><td>밤에는 혼잡/사진 대기. 일부 인스타 스팟은 주민/교통 매너 주의.</td><td>시바공원-조조지-세븐일레븐-롯폰기 묶음 추천.</td></tr>
+          <tr><td>디즈니</td><td>파크 티켓 사전 구매, 하루 전체 확보</td><td>대기와 체력 소모 큼. 포케파크/후지/해리포터와 동시에 욕심내면 일정 붕괴.</td><td>이번 여행에서는 “디즈니가 1순위일 때만” 넣는 선택지.</td></tr>
+          <tr><td>가마쿠라/에노시마</td><td>걷기 편한 신발, 해질녘 시간 조정</td><td>주말 혼잡. 바닷가 날씨 영향.</td><td>후지산이 흐릴 때 감성 근교 대체안으로 좋음.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>숙소 베이스 판단</h2>
+      <div class="grid three">
+        <div class="mini">
+          <strong>1순위: 신주쿠</strong>
+          <p>포케파크, 해리포터, 후지산 렌터카 픽업/반납 접근이 두루 좋습니다. 이번 후보지가 서쪽/중앙에 많아서 가장 균형이 좋습니다.</p>
+          <span class="tag">추천</span><span class="tag">테마 일정 유리</span><span class="tag">렌터카 유리</span>
+        </div>
+        <div class="mini">
+          <strong>2순위: 우에노/닛포리</strong>
+          <p>나리타 왕복은 최강입니다. 다만 포케파크/해리포터/시부야 쪽으로 매번 들어가는 시간이 늘어납니다.</p>
+          <span class="tag">공항 유리</span><span class="tag">동쪽 일정 유리</span>
+        </div>
+        <div class="mini">
+          <strong>3순위: 시부야/롯폰기</strong>
+          <p>야경/사진/카페 감성은 좋지만 공항과 테마파크 접근이 애매합니다. 가격도 올라갈 가능성이 큽니다.</p>
+          <span class="tag">도시 감성</span><span class="tag">비용 주의</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>추천 일정과 동선</h2>
+      <div class="timeline">
+        <div class="day">
+          <div class="day-title">5/30 토: 도착 + 도쿄 야경 압축</div>
+          <p>나리타 T1 도착 → 스카이라이너/넥스 등으로 숙소 이동 및 짐 보관 → 아자부다이 힐스/롯폰기 힐스 → 도쿄타워 포토스팟 → 시부야 스카이 일몰/야경.</p>
+          <p class="small">첫날은 비행 피로가 있으니 “도시 안에서 가까운 것들만” 묶습니다. 시부야 스카이는 2주 전 전후로 티켓 오픈을 확인하세요.</p>
+        </div>
+        <div class="day">
+          <div class="day-title">5/31 일: 포케파크 칸토 우선, 실패 시 해리포터</div>
+          <p>포케파크 티켓 확보 시: 신주쿠 → 게이오 요미우리랜드 → 곤돌라/버스 → 포케파크 중심으로 하루 운영. 저녁은 신주쿠 가볍게.</p>
+          <p class="small">일요일이라 혼잡 전제를 깔아야 합니다. 포케파크 티켓 확보가 안 되면 해리포터 스튜디오로 전환하는 것이 일정 안정성이 좋습니다.</p>
+        </div>
+        <div class="day">
+          <div class="day-title">6/1 월: 날씨 선택일 + 후지산은 렌터카 기준</div>
+          <p>맑음: 신주쿠 렌터카 픽업 → 가와구치코 → 아라쿠라야마 센겐공원 → 후지산 꿈의대교 선택 → 신주쿠 반납. 흐림/비: 해리포터 스튜디오 또는 가마쿠라/에노시마.</p>
+          <p class="small">신주쿠-가와구치코는 약 1시간45분-2시간30분, 가와구치코-아라쿠라야마는 약 15-25분으로 잡습니다. 꿈의대교는 시즈오카 쪽이라 추가하면 왕복 부담이 크게 늘어납니다.</p>
+        </div>
+        <div class="day">
+          <div class="day-title">6/2 화: 한 곳만 보고 공항</div>
+          <p>체크아웃/짐 보관 → 아사쿠사 또는 긴자 또는 아키하바라 중 1곳 → 15:30-16:00 나리타 T1 도착 목표 → LJ210 18:25 출국.</p>
+          <p class="small">마지막 날은 “한 곳만”이 핵심입니다. 욕심내면 쇼핑/식사/짐 찾기/공항 이동 중 하나가 삐끗합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>예약 액션 리스트</h2>
+      <table>
+        <thead><tr><th>우선순위</th><th>항목</th><th>권장 액션</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>포케파크 칸토</td><td>5/31 또는 6/1 티켓을 공식 영문 스토어에서 먼저 확인. 확보 실패 시 해리포터로 즉시 전환.</td></tr>
+          <tr><td>2</td><td>시부야 스카이</td><td>5/30 일몰 전후 입장 슬롯 확인. 늦어도 5/16 전후부터 티켓 오픈을 체크.</td></tr>
+          <tr><td>3</td><td>해리포터 스튜디오</td><td>포케파크 백업 또는 6/1 대체 일정으로 예매 가능 시간 확인.</td></tr>
+          <tr><td>4</td><td>숙소</td><td>신주쿠 우선 검색. 공항 편의가 압도적으로 중요하면 우에노/닛포리.</td></tr>
+          <tr><td>5</td><td>후지산 렌터카</td><td>6/1 실행 후보로 신주쿠 렌터카를 확인. 국제운전면허증/한국 면허증/여권/신용카드/ETC/톨비/주차/좌측통행과 전날 시정 예보를 함께 체크.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>참고 출처</h2>
+      <ul class="source-list">
+        <li><a href="https://www.narita-airport.jp/en/flight/airline-search/jna/">나리타공항 진에어 터미널 안내</a>: Jin Air는 NRT T1 North Wing / 4F.</li>
+        <li><a href="https://www.keisei.co.jp/keisei/tetudou/skyliner/us/index.php">Keisei Skyliner 공식</a>: 나리타-도쿄 도심 최단 36분 안내.</li>
+        <li><a href="https://www.pokepark-kanto.co.jp/ppark/ticketInfo/type/index?languageKind=en_US">PokéPark KANTO 공식 티켓 정보</a>: 티켓 종류, 앱, 한정 입장권, 포켓몬 숲 제한.</li>
+        <li><a href="https://www.yomiuriland.com/en/access/">Yomiuriland 공식 접근 안내</a>: 게이오 요미우리랜드역, 곤돌라/버스, 강풍 시 곤돌라 중단 가능.</li>
+        <li><a href="https://www.wbstudiotour.jp/en/ticket-information/price/">Warner Bros. Studio Tour Tokyo 가격표</a> 및 <a href="https://www.wbstudiotour.jp/en/plan-your-visit/arrival/">도착 안내</a>.</li>
+        <li><a href="https://www.tokyodisneyresort.jp/en/ticket/">Tokyo Disney Resort 공식 티켓</a>: 날짜별 가격/판매 가능 여부.</li>
+        <li><a href="https://visit-minato-city.tokyo/en/articles/487">Minato City 도쿄타워 포토스팟 안내</a>: 시바공원, 조조지, 롯폰기 힐스 등.</li>
+      </ul>
+    </section>
+  </main>
+
+  <div class="image-modal" id="imageModal" aria-hidden="true">
+    <div class="image-modal-card" role="dialog" aria-modal="true" aria-label="대표 이미지 확대">
+      <img id="modalImage" src="" alt="" />
+      <div class="image-modal-caption">
+        <span id="modalCaption">대표 이미지</span>
+        <button type="button" id="modalClose">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const categories = {
+      all: "전체",
+      airport: "공항/이동",
+      theme: "테마",
+      view: "전망/야경",
+      photo: "사진",
+      daytrip: "근교",
+      foodshop: "쇼핑/가벼운 일정",
+      transit: "교통 거점"
+    };
+
+    const routes = [
+      {
+        title: "5/30 도쿄 야경",
+        summary: "도쿄타워 → 롯폰기 → 시부야",
+        url: "https://www.google.com/maps/dir/?api=1&origin=Tokyo+Tower&destination=SHIBUYA+SKY&waypoints=Zojoji+Temple%7CRoppongi+Hills+Mori+Tower&travelmode=transit"
+      },
+      {
+        title: "5/31 포케파크",
+        summary: "신주쿠 → 요미우리랜드",
+        url: "https://www.google.com/maps/dir/?api=1&origin=Shinjuku+Station&destination=Pok%C3%A9Park+KANTO+Yomiuriland&travelmode=transit"
+      },
+      {
+        title: "6/1 후지산 렌터카",
+        summary: "신주쿠 → 가와구치코 → 센겐공원 → 꿈의대교 선택",
+        url: "https://www.google.com/maps/dir/?api=1&origin=Shinjuku+Station&destination=Shinjuku+Station&waypoints=Kawaguchiko+Station%7CArakurayama+Sengen+Park%7CFujisan+Yumeno+Ohashi+Bridge&travelmode=driving"
+      },
+      {
+        title: "6/2 공항 복귀",
+        summary: "긴자/아사쿠사 → 나리타 T1",
+        url: "https://www.google.com/maps/dir/?api=1&origin=GINZA+SIX&destination=Narita+Airport+Terminal+1&travelmode=transit"
+      }
+    ];
+
+    const places = [
+      {id:"nrt", name:"나리타공항 T1", cat:"airport", lat:35.7719, lng:140.3929, day:"5/30, 6/2", time:"입국/출국", priority:"필수", reservation:"항공편/터미널 재확인", weather:"낮음", crowd:"출국 2.5-3시간 여유", note:"Jin Air는 나리타 T1 North Wing / 4F. 귀국일 15:30-16:00 도착 목표.", pre:"항공 스케줄 재확인, 수하물/출국심사 여유", google:"https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+1"},
+      {id:"keiseiueno", name:"게이세이 우에노", cat:"transit", lat:35.7117, lng:139.7734, day:"숙소 후보", time:"공항철도", priority:"숙소 후보", reservation:"스카이라이너 좌석", weather:"낮음", crowd:"출퇴근 시간 혼잡", note:"스카이라이너 이용 시 공항 접근 우수. 우에노/닛포리 숙소면 귀국이 편함.", pre:"스카이라이너 시간표 확인", google:"https://www.google.com/maps/search/?api=1&query=Keisei+Ueno+Station"},
+      {id:"shinjuku", name:"신주쿠", cat:"transit", lat:35.6896, lng:139.7006, day:"숙소 1순위", time:"숙소 1순위", priority:"추천", reservation:"숙소/렌터카 조기 예약", weather:"낮음", crowd:"역 구조 복잡", note:"포케파크, 해리포터, 후지산 렌터카 픽업/반납 접근 균형이 좋음.", pre:"역 주변은 복잡하므로 숙소 출구와 렌터카 지점 확인", google:"https://www.google.com/maps/search/?api=1&query=Shinjuku+Station"},
+      {id:"shibuyasky", name:"시부야 스카이", cat:"view", lat:35.6585, lng:139.7020, day:"5/30", time:"첫날 저녁", priority:"상", reservation:"필수: 일몰 슬롯", weather:"높음: 옥상 폐쇄 가능", crowd:"인기 시간대 혼잡", note:"일몰/야경 핵심. 옥상은 날씨에 민감하고 반입 제한 있음.", pre:"사전예매, 큰 짐 보관, 악천후 대체안", google:"https://www.google.com/maps/search/?api=1&query=SHIBUYA+SKY"},
+      {id:"tokyotower", name:"도쿄타워", cat:"photo", lat:35.6586, lng:139.7454, day:"5/30", time:"첫날 오후-밤", priority:"상", reservation:"불필요", weather:"중간", crowd:"야간 사진 대기", note:"DM에서 반복된 사진 축. 시바공원/조조지/롯폰기와 묶기 좋음.", pre:"야간 혼잡, 사진 매너", google:"https://www.google.com/maps/search/?api=1&query=Tokyo+Tower"},
+      {id:"shibapark", name:"시바공원/조조지", cat:"photo", lat:35.6574, lng:139.7482, day:"5/30", time:"첫날", priority:"상", reservation:"불필요", weather:"중간", crowd:"주말 관광객", note:"도쿄타워 배경 사진 안정픽. 날씨 리스크가 비교적 낮음.", pre:"밤에는 조조지 출입 제한 가능", google:"https://www.google.com/maps/search/?api=1&query=Zojoji+Temple+Tokyo"},
+      {id:"seven", name:"세븐일레븐 미나토구 시바 3초메", cat:"photo", lat:35.6518, lng:139.7470, day:"5/30", time:"첫날", priority:"중", reservation:"불필요", weather:"중간", crowd:"짧게 촬영", note:"인스타 감성 도쿄타워 스팟. 짧게 들르는 용도.", pre:"주민/차량 동선 방해 금지", google:"https://www.google.com/maps/search/?api=1&query=7-Eleven+Minato+Shiba+3-chome+Tokyo"},
+      {id:"roppongi", name:"롯폰기 힐스 모리타워", cat:"view", lat:35.6604, lng:139.7292, day:"5/30", time:"첫날", priority:"중상", reservation:"권장", weather:"중간", crowd:"저녁 혼잡", note:"도쿄타워를 내려다보는 전망 후보. 시부야 스카이와 중복되므로 하나만 선택해도 됨.", pre:"전망대 티켓/운영 확인", google:"https://www.google.com/maps/search/?api=1&query=Roppongi+Hills+Mori+Tower"},
+      {id:"azabudai", name:"아자부다이 힐스", cat:"view", lat:35.6602, lng:139.7404, day:"5/30", time:"첫날", priority:"중", reservation:"시설별 확인", weather:"낮음", crowd:"식사 시간 혼잡", note:"도쿄타워/롯폰기 사이에 넣기 좋은 도시 산책 후보.", pre:"운영시설/전망 가능 여부 확인", google:"https://www.google.com/maps/search/?api=1&query=Azabudai+Hills"},
+      {id:"pokepark", name:"포케파크 칸토 / 요미우리랜드", cat:"theme", lat:35.6255, lng:139.5171, day:"5/31 우선", time:"하루 메인", priority:"최상", reservation:"필수: 공식 티켓/앱", weather:"높음: 야외/곤돌라", crowd:"매진/한정 입장권", note:"티켓 확보 시 이번 여행의 강한 앵커. 야외/앱/한정 입장권 변수 큼.", pre:"공식 티켓, 앱 설치, 날씨, 110계단 제한", google:"https://www.google.com/maps/search/?api=1&query=Pok%C3%A9Park+KANTO+Yomiuriland"},
+      {id:"harry", name:"해리포터 스튜디오 투어 도쿄", cat:"theme", lat:35.7420, lng:139.6476, day:"5/31 또는 6/1", time:"반나절-하루", priority:"상", reservation:"필수/권장: 시간권", weather:"낮음: 실내", crowd:"인기 시간 매진", note:"실내라 비 오는 날 강력. 공식 권장 관람 3-4시간.", pre:"사전예매, 입장시간, 굿즈/식사 시간", google:"https://www.google.com/maps/search/?api=1&query=Warner+Bros.+Studio+Tour+Tokyo"},
+      {id:"disney", name:"도쿄디즈니리조트", cat:"theme", lat:35.6329, lng:139.8804, day:"선택 시 하루 전체", time:"하루 전체", priority:"선택", reservation:"필수: 파크 티켓", weather:"중간", crowd:"대기/체력 소모 큼", note:"넣는 순간 하루가 사라지는 일정. 이번 후보들 중 우선순위 조정 필요.", pre:"파크 티켓, 대기시간, 체력", google:"https://www.google.com/maps/search/?api=1&query=Tokyo+Disney+Resort"},
+      {id:"teamlab", name:"팀랩 플래닛 도쿄", cat:"theme", lat:35.6491, lng:139.7898, day:"선택", time:"선택", priority:"하", reservation:"권장", weather:"낮음: 실내", crowd:"시간대별 혼잡", note:"DM에서 과부하 예시로 언급된 후보. 마지막 날 여러 곳과 묶기엔 위험.", pre:"사전예매, 맨발 체험/복장", google:"https://www.google.com/maps/search/?api=1&query=teamLab+Planets+Tokyo"},
+      {id:"asakusa", name:"아사쿠사 문화관광센터", cat:"foodshop", lat:35.7107, lng:139.7966, day:"6/2 후보", time:"마지막 날 후보", priority:"중", reservation:"불필요", weather:"중간", crowd:"낮 시간 혼잡", note:"무료 전망/아사쿠사 산책. 공항 가기 전 한 곳만 볼 때 좋음.", pre:"짐 보관, 이동시간", google:"https://www.google.com/maps/search/?api=1&query=Asakusa+Culture+Tourist+Information+Center"},
+      {id:"ginza", name:"긴자 식스", cat:"foodshop", lat:35.6697, lng:139.7643, day:"6/2 후보", time:"마지막 날 후보", priority:"중", reservation:"식당은 권장", weather:"낮음", crowd:"쇼핑 시간 초과 주의", note:"쇼핑/카페/선물 구매에 적합. 공항 이동 전 과소비와 시간 초과 주의.", pre:"짐 보관, 면세 시간", google:"https://www.google.com/maps/search/?api=1&query=GINZA+SIX"},
+      {id:"akiba", name:"아키하바라", cat:"foodshop", lat:35.6984, lng:139.7730, day:"6/2 후보", time:"마지막 날 후보", priority:"중", reservation:"불필요", weather:"낮음", crowd:"쇼핑 시간 제한", note:"굿즈/전자상가/가벼운 쇼핑. 우에노/닛포리 숙소와 궁합 좋음.", pre:"쇼핑 시간 제한", google:"https://www.google.com/maps/search/?api=1&query=Akihabara+Station"},
+      {id:"kamakura", name:"가마쿠라역", cat:"daytrip", lat:35.3192, lng:139.5504, day:"6/1 대체", time:"근교 대체", priority:"중", reservation:"불필요", weather:"중간", crowd:"주말 혼잡", note:"에노덴/바다/감성 산책. 후지산 흐린 날 대체로 좋음.", pre:"주말 혼잡, 걷기 편한 신발", google:"https://www.google.com/maps/search/?api=1&query=Kamakura+Station"},
+      {id:"enoshima", name:"에노시마", cat:"daytrip", lat:35.3110, lng:139.4876, day:"6/1 대체", time:"근교 대체", priority:"중", reservation:"불필요", weather:"중간-높음", crowd:"일몰 전 혼잡", note:"가마쿠라와 묶는 일몰 후보. 바람/비 영향.", pre:"해질녘 시간, 귀가 열차", google:"https://www.google.com/maps/search/?api=1&query=Enoshima+Station"},
+      {id:"kawaguchiko", name:"가와구치코역", cat:"daytrip", lat:35.4982, lng:138.7688, day:"6/1 맑은 날", time:"렌터카", priority:"조건부 상", reservation:"신주쿠 렌터카/주차 확인", weather:"매우 높음", crowd:"주차/관광지 혼잡", note:"후지산 당일치기 기본 거점. 신주쿠에서 차로 약 1시간45분-2시간30분, 보이지 않으면 만족도 급락.", pre:"국제운전면허증, 한국 면허증, 여권, 신용카드, ETC/톨비, 전날 시정 확인", google:"https://www.google.com/maps/search/?api=1&query=Kawaguchiko+Station"},
+      {id:"arakura", name:"아라쿠라야마 센겐공원", cat:"daytrip", lat:35.5013, lng:138.8010, day:"6/1 맑은 날", time:"렌터카", priority:"조건부 상", reservation:"주차장 확인", weather:"매우 높음", crowd:"주차/계단/사진 대기", note:"후지산+오층탑 사진 명소. 가와구치코에서 차로 약 15-25분.", pre:"날씨, 체력, 주차, 혼잡, 좌측통행 주의", google:"https://www.google.com/maps/search/?api=1&query=Arakurayama+Sengen+Park"},
+      {id:"dreambridge", name:"후지산 꿈의대교", cat:"daytrip", lat:35.1543, lng:138.6876, day:"6/1 선택", time:"렌터카 선택", priority:"조건부", reservation:"주차/동선 확인", weather:"매우 높음", crowd:"지역 매너/주차 주의", note:"DM 공유 사진 스팟. 가와구치코와 방향이 달라 추가 시 왕복 부담이 크게 늘어나는 선택 코스.", pre:"후지산 가시성, 주차, 지역 매너, 귀경 정체", google:"https://www.google.com/maps/search/?api=1&query=Fujisan+Yumeno+Ohashi+Bridge"}
+    ];
+
+    const placeMedia = {
+      nrt: { label: "나리타", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Narita_Nemzetk%C3%B6zi_Rep%C3%BCl%C5%91t%C3%A9r.jpg/330px-Narita_Nemzetk%C3%B6zi_Rep%C3%BCl%C5%91t%C3%A9r.jpg", imageSource: "https://en.wikipedia.org/wiki/Narita_International_Airport" },
+      keiseiueno: { label: "우에노", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Keisei-Ueno-STA.jpg/330px-Keisei-Ueno-STA.jpg", imageSource: "https://en.wikipedia.org/wiki/Keisei_Ueno_Station" },
+      shinjuku: { label: "신주쿠", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/JRE_Shinjuku-STA_South.jpg/330px-JRE_Shinjuku-STA_South.jpg", imageSource: "https://en.wikipedia.org/wiki/Shinjuku_Station" },
+      shibuyasky: { label: "시부야", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg/330px-SHIBUYA_SCRAMBLE_SQUARE_East_Tower.jpg", imageSource: "https://en.wikipedia.org/wiki/Shibuya_Scramble_Square" },
+      tokyotower: { label: "타워", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Tokyo_Tower_2023.jpg/330px-Tokyo_Tower_2023.jpg", imageSource: "https://en.wikipedia.org/wiki/Tokyo_Tower" },
+      shibapark: { label: "시바공원", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Z%C5%8Dj%C5%8D-ji_20241021.jpg/330px-Z%C5%8Dj%C5%8D-ji_20241021.jpg", imageSource: "https://en.wikipedia.org/wiki/Z%C5%8Dj%C5%8D-ji" },
+      seven: { label: "편의점", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Tokyo_Tower_At_Night.jpg/337px-Tokyo_Tower_At_Night.jpg", imageSource: "https://commons.wikimedia.org/wiki/File:Tokyo_Tower_At_Night.jpg" },
+      roppongi: { label: "롯폰기", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Views_from_Azabudai_Hills_Mori_JP_Tower_13.jpg/330px-Views_from_Azabudai_Hills_Mori_JP_Tower_13.jpg", imageSource: "https://en.wikipedia.org/wiki/Roppongi_Hills_Mori_Tower" },
+      azabudai: { label: "아자부", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Azabudai_Hills_%28Garden_Plaza_B%2C_towers%2C_and_sign%3B_2025-11-06%29.jpg/330px-Azabudai_Hills_%28Garden_Plaza_B%2C_towers%2C_and_sign%3B_2025-11-06%29.jpg", imageSource: "https://en.wikipedia.org/wiki/Azabudai_Hills" },
+      pokepark: { label: "포케파크", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Yomiuriland-20100411.jpg/330px-Yomiuriland-20100411.jpg", imageSource: "https://en.wikipedia.org/wiki/Yomiuriland" },
+      harry: { label: "해리포터", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Warner_Bros._Studio_Tour_Tokyo_logo.svg/330px-Warner_Bros._Studio_Tour_Tokyo_logo.svg.png", imageSource: "https://en.wikipedia.org/wiki/Warner_Bros._Studio_Tour_Tokyo_%E2%80%93_The_Making_of_Harry_Potter" },
+      disney: { label: "디즈니", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Tokyo_Disneyland_%281-1_crop%29.jpg/330px-Tokyo_Disneyland_%281-1_crop%29.jpg", imageSource: "https://en.wikipedia.org/wiki/Tokyo_Disney_Resort" },
+      teamlab: { label: "팀랩", image: "https://assets.team-lab.com/b5EBo9Uo-OK6SM09ZTkEZQ/89JNH3JuCgHZcGbACeD2vU/width=1200,format=jpeg", imageSource: "https://www.teamlab.art/e/planets/" },
+      asakusa: { label: "아사쿠사", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Asakusa_Culture_Tourist_Information_Center_2016.jpg/330px-Asakusa_Culture_Tourist_Information_Center_2016.jpg", imageSource: "https://en.wikipedia.org/wiki/Asakusa_Culture_Tourist_Information_Center" },
+      ginza: { label: "긴자", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Ginza_Six_02.jpg/330px-Ginza_Six_02.jpg", imageSource: "https://en.wikipedia.org/wiki/Ginza_Six" },
+      akiba: { label: "아키바", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png/330px-Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png", imageSource: "https://en.wikipedia.org/wiki/Akihabara" },
+      kamakura: { label: "가마쿠라", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/JR_Kamakura_Station_EastGate.jpg/330px-JR_Kamakura_Station_EastGate.jpg", imageSource: "https://en.wikipedia.org/wiki/Kamakura_Station" },
+      enoshima: { label: "에노시마", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/EnoshimaAeralPhoto1988JP14.jpg/330px-EnoshimaAeralPhoto1988JP14.jpg", imageSource: "https://en.wikipedia.org/wiki/Enoshima" },
+      kawaguchiko: { label: "가와구치", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/20100728_Kawaguchiko_Station_6622.jpg/330px-20100728_Kawaguchiko_Station_6622.jpg", imageSource: "https://en.wikipedia.org/wiki/Kawaguchiko_Station" },
+      arakura: { label: "센겐공원", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Chuurei-tou_Fujiyoshida_17025277650_c59733d6ba_o.jpg/330px-Chuurei-tou_Fujiyoshida_17025277650_c59733d6ba_o.jpg", imageSource: "https://en.wikipedia.org/wiki/Arakurayama_Sengen_Park" },
+      dreambridge: { label: "꿈의대교", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/330px-View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg", imageSource: "https://en.wikipedia.org/wiki/Mount_Fuji" }
+    };
+
+    places.forEach(place => Object.assign(place, placeMedia[place.id]));
+
+    const instagramByPlace = {
+      shibuyasky: [
+        { label: "시부야스카이 팁", url: "https://www.instagram.com/p/DUAzPrDEx51/" },
+        { label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }
+      ],
+      tokyotower: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      shibapark: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      seven: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      roppongi: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      azabudai: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      pokepark: [
+        { label: "포케파크 공식공유", url: "https://www.instagram.com/p/DXWfAnljoMa/" },
+        { label: "포케파크 후기", url: "https://www.instagram.com/p/DU0ac65ksXs/" }
+      ],
+      asakusa: [{ label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }],
+      dreambridge: [
+        { label: "후지산 꿈의대교", url: "https://www.instagram.com/p/DUN2zWvATc1/" },
+        { label: "도쿄 예쁜 스팟", url: "https://www.instagram.com/p/DV55KG5j-84/" }
+      ]
+    };
+
+    places.forEach(place => {
+      if (instagramByPlace[place.id]) place.instagram = instagramByPlace[place.id];
+    });
+
+    const colors = {airport:"#3066be", theme:"#b83a2f", view:"#256f58", photo:"#d66b1f", daytrip:"#7c4d9e", foodshop:"#8a6f34", transit:"#54616d"};
+    const map = L.map("map", { scrollWheelZoom: true }).setView([35.69, 139.72], 10);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    const markers = new Map();
+    function escapeAttr(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function iconFor(p) {
+      return L.divIcon({
+        className: "",
+        html: `<div class="pin ${p.cat}"><span>${p.label || p.name.slice(0, 5)}</span></div>`,
+        iconSize: [74, 38],
+        iconAnchor: [37, 38],
+        popupAnchor: [0, -38]
+      });
+    }
+
+    places.forEach(p => {
+      const marker = L.marker([p.lat, p.lng], { icon: iconFor(p) })
+        .bindPopup(`
+          <button class="popup-photo" type="button" data-image="${escapeAttr(p.image)}" data-alt="${escapeAttr(p.name)}" data-source="${escapeAttr(p.imageSource)}">
+            <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)} 대표 이미지">
+          </button>
+          <strong>${p.name}</strong><br>
+          <span>${categories[p.cat]} · 추천일: ${p.day}</span><br><br>
+          ${p.note}<br><br>
+          <b>예약 필요</b>: ${p.reservation}<br>
+          <b>날씨 영향</b>: ${p.weather}<br>
+          <b>웨이팅/혼잡</b>: ${p.crowd}<br>
+          <b>전제조건</b>: ${p.pre}<br><br>
+          <a href="${p.google}" target="_blank" rel="noreferrer">Google Maps에서 열기</a>
+          <a class="popup-source" href="${escapeAttr(p.imageSource)}" target="_blank" rel="noreferrer">이미지 출처 보기</a>
+        `);
+      marker.addTo(map);
+      markers.set(p.id, marker);
+    });
+
+    const routeActions = document.getElementById("routeActions");
+    routes.forEach(route => {
+      const link = document.createElement("a");
+      link.className = "route-card";
+      link.href = route.url;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.innerHTML = `<strong>${route.title}</strong><span>${route.summary}</span>`;
+      routeActions.appendChild(link);
+    });
+
+    const filters = document.getElementById("filters");
+    Object.entries(categories).forEach(([key, label]) => {
+      const btn = document.createElement("button");
+      btn.className = "filter" + (key === "all" ? " active" : "");
+      btn.textContent = label;
+      btn.onclick = () => selectCategory(key);
+      filters.appendChild(btn);
+    });
+
+    const list = document.getElementById("placeList");
+    function renderInstagramLinks(p) {
+      if (!p.instagram || !p.instagram.length) return "";
+      return `<div class="ig-links">${p.instagram.map(link => `<a class="ig-link" href="${escapeAttr(link.url)}" target="_blank" rel="noreferrer">Instagram: ${link.label}</a>`).join("")}</div>`;
+    }
+
+    function renderList(cat = "all") {
+      list.innerHTML = "";
+      places.filter(p => cat === "all" || p.cat === cat).forEach(p => {
+        const item = document.createElement("button");
+        item.className = "place";
+        item.innerHTML = `
+          <div class="name">${p.name}</div>
+          <div class="meta">${categories[p.cat]} · 추천일 ${p.day} · ${p.priority}</div>
+          <div class="conditions">
+            <div class="condition"><b>예약</b><span>${p.reservation}</span></div>
+            <div class="condition"><b>날씨</b><span>${p.weather}</span></div>
+            <div class="condition"><b>혼잡</b><span>${p.crowd}</span></div>
+          </div>
+          <div class="small">${p.pre}</div>
+          ${renderInstagramLinks(p)}
+        `;
+        item.onclick = () => {
+          map.setView([p.lat, p.lng], p.cat === "daytrip" ? 11 : 14, { animate: true });
+          markers.get(p.id).openPopup();
+        };
+        list.appendChild(item);
+      });
+    }
+
+    function selectCategory(cat) {
+      document.querySelectorAll("button.filter").forEach(btn => {
+        btn.classList.toggle("active", btn.textContent === categories[cat]);
+      });
+      markers.forEach((marker, id) => {
+        const place = places.find(p => p.id === id);
+        if (cat === "all" || place.cat === cat) {
+          marker.addTo(map);
+        } else {
+          marker.removeFrom(map);
+        }
+      });
+      renderList(cat);
+      const visible = places.filter(p => cat === "all" || p.cat === cat);
+      if (visible.length) {
+        const bounds = L.latLngBounds(visible.map(p => [p.lat, p.lng]));
+        map.fitBounds(bounds, { padding: [35, 35], maxZoom: 11 });
+      }
+    }
+    renderList();
+
+    const imageModal = document.getElementById("imageModal");
+    const modalImage = document.getElementById("modalImage");
+    const modalCaption = document.getElementById("modalCaption");
+    const modalClose = document.getElementById("modalClose");
+
+    function closeImageModal() {
+      imageModal.classList.remove("open");
+      imageModal.setAttribute("aria-hidden", "true");
+      modalImage.src = "";
+      modalImage.alt = "";
+    }
+
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest(".popup-photo");
+      if (!trigger) return;
+      modalImage.src = trigger.dataset.image;
+      modalImage.alt = `${trigger.dataset.alt} 대표 이미지`;
+      modalCaption.innerHTML = `${trigger.dataset.alt} · <a href="${escapeAttr(trigger.dataset.source)}" target="_blank" rel="noreferrer">이미지 출처</a>`;
+      imageModal.classList.add("open");
+      imageModal.setAttribute("aria-hidden", "false");
+    });
+
+    modalClose.addEventListener("click", closeImageModal);
+    imageModal.addEventListener("click", event => {
+      if (event.target === imageModal) closeImageModal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && imageModal.classList.contains("open")) closeImageModal();
+    });
+  </script>
+</body>
+</html>
