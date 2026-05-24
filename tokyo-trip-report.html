@@ -928,10 +928,20 @@
       harryEmbed: "https://maps.google.com/maps?q=Warner%20Bros.%20Studio%20Tour%20Tokyo&z=15&output=embed",
       shibuyaSky: "https://www.google.com/maps/search/?api=1&query=SHIBUYA+SKY",
       shibuyaSkyEmbed: "https://maps.google.com/maps?q=SHIBUYA%20SKY&z=16&output=embed",
+      nact: "https://www.google.com/maps/search/?api=1&query=The+National+Art+Center+Tokyo",
+      nactEmbed: "https://maps.google.com/maps?q=The%20National%20Art%20Center%20Tokyo&z=16&output=embed",
+      omotesandoHills: "https://www.google.com/maps/search/?api=1&query=Omotesando+Hills",
+      omotesandoHillsEmbed: "https://maps.google.com/maps?q=Omotesando%20Hills&z=16&output=embed",
+      daikanyamaTsutaya: "https://www.google.com/maps/search/?api=1&query=Daikanyama+T-SITE+Tsutaya+Books",
+      daikanyamaTsutayaEmbed: "https://maps.google.com/maps?q=Daikanyama%20T-SITE%20Tsutaya%20Books&z=16&output=embed",
+      hamarikyu: "https://www.google.com/maps/search/?api=1&query=Hama-rikyu+Gardens",
+      hamarikyuEmbed: "https://maps.google.com/maps?q=Hama-rikyu%20Gardens&z=16&output=embed",
       ginza: "https://www.google.com/maps/search/?api=1&query=Ginza+Tokyo+shopping",
       ginzaEmbed: "https://maps.google.com/maps?q=Ginza%20Tokyo&z=14&output=embed",
-      shinjuku: "https://www.google.com/maps/search/?api=1&query=Shinjuku+Tokyo",
-      shinjukuEmbed: "https://maps.google.com/maps?q=Shinjuku%20Tokyo&z=14&output=embed",
+      ginzaSix: "https://www.google.com/maps/search/?api=1&query=GINZA+SIX",
+      ginzaSixEmbed: "https://maps.google.com/maps?q=GINZA%20SIX&z=16&output=embed",
+      uniqloGinza: "https://www.google.com/maps/search/?api=1&query=UNIQLO+Ginza",
+      uniqloGinzaEmbed: "https://maps.google.com/maps?q=UNIQLO%20Ginza&z=16&output=embed",
       nezuMuseum: "https://www.google.com/maps/search/?api=1&query=Nezu+Museum",
       nezuMuseumEmbed: "https://maps.google.com/maps?q=Nezu%20Museum&z=16&output=embed",
       nezuCafe: "https://www.google.com/maps/search/?api=1&query=Nezu+Cafe+Tokyo",
@@ -944,9 +954,9 @@
       day2All: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Comfort+Inn+Tokyo+Roppongi&waypoints=Warner+Bros.+Studio+Tour+Tokyo%7CSHIBUYA+SKY&travelmode=transit",
       day2Harry: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Warner+Bros.+Studio+Tour+Tokyo&travelmode=transit",
       day2Shibuya: "https://www.google.com/maps/dir/?api=1&origin=Warner+Bros.+Studio+Tour+Tokyo&destination=SHIBUYA+SKY&travelmode=transit",
-      day3Roppongi: "https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo+shopping+cafe",
-      day3Ginza: "https://www.google.com/maps/search/?api=1&query=Ginza+Tokyo+shopping",
-      day3Shinjuku: "https://www.google.com/maps/search/?api=1&query=Shinjuku+Tokyo",
+      day3All: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Comfort+Inn+Tokyo+Roppongi&waypoints=The+National+Art+Center+Tokyo%7COmotesando+Hills%7CDaikanyama+T-SITE+Tsutaya+Books%7CHama-rikyu+Gardens%7CGINZA+SIX%7CUNIQLO+Ginza&travelmode=transit",
+      day3West: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Daikanyama+T-SITE+Tsutaya+Books&waypoints=The+National+Art+Center+Tokyo%7COmotesando+Hills&travelmode=transit",
+      day3Ginza: "https://www.google.com/maps/dir/?api=1&origin=Hama-rikyu+Gardens&destination=UNIQLO+Ginza&waypoints=GINZA+SIX&travelmode=walking",
       day4All: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Narita+Airport+Terminal+1&waypoints=Nezu+Museum%7CNezu+Cafe%7CTokyo+Station&travelmode=transit",
       day4Nezu: "https://www.google.com/maps/dir/?api=1&origin=Comfort+Inn+Tokyo+Roppongi&destination=Nezu+Museum&travelmode=transit",
       day4Airport: "https://www.google.com/maps/dir/?api=1&origin=Tokyo+Station&destination=Narita+Airport+Terminal+1&travelmode=transit"
@@ -1136,52 +1146,90 @@
         id: "day3",
         label: "Day 3",
         date: "6/1 월",
-        title: "자유",
-        narrative: "컨디션에 맞춰 쇼핑, 카페, 못 간 곳을 채우는 자유일정.",
-        times: [["오전", "느리게 시작"], ["낮", "한 권역 선택"], ["저녁", "짐 정리"]],
-        route: ["숙소", "자유 선택", "식사/쇼핑", "숙소"],
+        title: "산책",
+        narrative: "롯폰기에서 시작해 오모테산도와 다이칸야마를 보고, 하마리큐를 거쳐 긴자에서 마무리하는 날.",
+        times: [["10:00", "국립신미술관"], ["15:30", "하마리큐"], ["17:15", "긴자"]],
+        route: ["숙소", "국립신미술관", "오모테산도", "다이칸야마", "하마리큐", "긴자", "숙소"],
         routeActions: [
-          ["🏨 롯폰기", routes.day3Roppongi, true],
-          ["🛍️ 긴자", routes.day3Ginza, false],
-          ["🚆 신주쿠", routes.day3Shinjuku, false]
+          ["🗺️ 전체", routes.day3All, true],
+          ["🚶 서쪽", routes.day3West, false],
+          ["🛍️ 긴자", routes.day3Ginza, false]
         ],
         map: {
-          caption: "롯폰기 기준 자유 권역",
-          embed: "https://maps.google.com/maps?q=Roppongi%2C%20Ginza%2C%20Shibuya%2C%20Shinjuku%2C%20Tokyo&z=11&output=embed",
-          url: "https://www.google.com/maps/search/?api=1&query=Roppongi+Ginza+Shibuya+Shinjuku+Tokyo"
+          caption: "롯폰기 → 오모테산도 → 다이칸야마 → 하마리큐 → 긴자",
+          embed: "https://maps.google.com/maps?q=The%20National%20Art%20Center%20Tokyo%2C%20Omotesando%20Hills%2C%20Daikanyama%20T-SITE%2C%20Hama-rikyu%20Gardens%2C%20GINZA%20SIX&z=12&output=embed",
+          url: "https://www.google.com/maps/search/?api=1&query=The+National+Art+Center+Tokyo+Omotesando+Hills+Daikanyama+T-SITE+Hama-rikyu+Gardens+GINZA+SIX"
         },
         places: [
           {
-            icon: "hotel",
-            name: "숙소",
-            action: "컨디션 보고 느리게 시작.",
-            caution: "전날 피로가 남을 수 있음",
-            tip: "무리하지 않는 날로 쓰기",
-            mapUrl: maps.hotel,
-            embedUrl: maps.hotelEmbed
+            icon: "museum",
+            name: "국립신미술관",
+            action: "롯폰기에서 하루를 조용하게 시작.",
+            time: "10:00",
+            caution: "화요일 휴관 · 입장은 폐관 30분 전까지",
+            tip: "전시를 길게 보면 뒤 일정이 밀림",
+            mapUrl: maps.nact,
+            embedUrl: maps.nactEmbed,
+            sources: [["공식", "https://www.nact.jp/english/information/"]]
           },
           {
             icon: "shop",
-            name: "긴자",
-            action: "쇼핑과 백화점 중심으로 움직이기.",
-            caution: "한 권역만 잡기",
-            tip: "비 오면 실내 일정으로 좋음",
-            mapUrl: maps.ginza,
-            embedUrl: maps.ginzaEmbed
+            name: "오모테산도 힐즈",
+            action: "건축과 쇼핑을 짧게 보는 구간.",
+            time: "11:30",
+            caution: "매장별 영업시간이 다를 수 있음",
+            tip: "길게 머물지 말고 다이칸야마로 이동",
+            mapUrl: maps.omotesandoHills,
+            embedUrl: maps.omotesandoHillsEmbed,
+            sources: [["공식", "https://www.omotesandohills.com/information/opening_hour.html"]]
           },
           {
-            icon: "train",
-            name: "신주쿠",
-            action: "먹거리와 쇼핑 후보.",
-            caution: "역이 복잡해서 이동 피로 있음",
-            tip: "팀원 취향이 갈리면 오후만 사용",
-            mapUrl: maps.shinjuku,
-            embedUrl: maps.shinjukuEmbed
+            icon: "cafe",
+            name: "다이칸야마 츠타야",
+            action: "서점과 카페 분위기를 보는 핵심 코스.",
+            time: "13:30",
+            caution: "점심/카페가 길어지면 하마리큐가 위험",
+            tip: "사진보다 쉬어가는 구간으로 사용",
+            mapUrl: maps.daikanyamaTsutaya,
+            embedUrl: maps.daikanyamaTsutayaEmbed,
+            sources: [["공식", "https://store.tsite.jp/daikanyama/english/"]]
+          },
+          {
+            icon: "walk",
+            name: "하마리큐 은사정원",
+            action: "긴자 가기 전 산책하는 정원.",
+            time: "15:30",
+            caution: "16:30 입장 마감",
+            tip: "늦으면 과감히 생략하고 긴자로 이동",
+            mapUrl: maps.hamarikyu,
+            embedUrl: maps.hamarikyuEmbed,
+            sources: [["공식", "https://www.tokyo-park.or.jp/teien/en/hama-rikyu/outline.html"]]
+          },
+          {
+            icon: "shop",
+            name: "긴자식스",
+            action: "긴자 쇼핑과 저녁 후보.",
+            time: "17:15",
+            caution: "일부 매장은 영업시간이 다를 수 있음",
+            tip: "식당가는 저녁 후보로 사용",
+            mapUrl: maps.ginzaSix,
+            embedUrl: maps.ginzaSixEmbed,
+            sources: [["공식", "https://ginza6.tokyo/hours"]]
+          },
+          {
+            icon: "shop",
+            name: "유니클로 긴자점",
+            action: "긴자에서 쇼핑 마무리.",
+            caution: "혼잡할 수 있음",
+            tip: "살 것만 정하고 짧게 보기",
+            mapUrl: maps.uniqloGinza,
+            embedUrl: maps.uniqloGinzaEmbed,
+            sources: [["참고", "https://www.ginza.jp/ja/landmark/9743"]]
           }
         ],
         extras: [
-          ["비 오면", "긴자·시부야·롯폰기 실내 위주로 전환."],
-          ["시간 남으면", "첫날 못 간 도쿄타워 주변을 보강."]
+          ["핵심", "하마리큐 16:30 입장 마감 때문에 긴자보다 먼저 간다."],
+          ["저녁", "긴자식스와 유니클로를 보고 숙소로 복귀."]
         ]
       },
       {
