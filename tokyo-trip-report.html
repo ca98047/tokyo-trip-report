@@ -175,7 +175,7 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 9px;
     }
 
@@ -678,6 +678,154 @@
       font-weight: 750;
     }
 
+    .overview-modal[hidden] {
+      display: none;
+    }
+
+    .overview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: max(16px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+      background:
+        radial-gradient(circle at 20% 8%, rgba(240, 184, 75, 0.22), transparent 18rem),
+        linear-gradient(145deg, rgba(20, 63, 49, 0.96), rgba(16, 28, 25, 0.98));
+      color: #fffdf7;
+    }
+
+    .overview-modal.is-open {
+      animation: overviewFade 180ms ease both;
+    }
+
+    @keyframes overviewFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    body.overview-locked {
+      overflow: hidden;
+    }
+
+    .overview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .overview-title {
+      display: grid;
+      gap: 1px;
+    }
+
+    .overview-title strong {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .overview-title span {
+      color: rgba(255, 253, 247, 0.72);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .overview-close {
+      display: inline-grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      color: #fffdf7;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .overview-track {
+      display: flex;
+      gap: 14px;
+      min-width: 0;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-padding: calc((100vw - min(88vw, 430px)) / 2);
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .overview-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .overview-slide {
+      flex: 0 0 min(88vw, 430px);
+      display: grid;
+      place-items: center;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+
+    .overview-slide img,
+    .overview-slide object {
+      display: block;
+      width: 100%;
+      max-height: 100%;
+      aspect-ratio: 9 / 16;
+      border-radius: 28px;
+      background: #f8ead7;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      object-fit: contain;
+    }
+
+    .overview-slide object {
+      pointer-events: none;
+    }
+
+    .overview-footer {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .overview-counter {
+      color: rgba(255, 253, 247, 0.78);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .overview-dots {
+      display: inline-flex;
+      gap: 7px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .overview-dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 253, 247, 0.32);
+      cursor: pointer;
+    }
+
+    .overview-dot.active {
+      width: 26px;
+      background: var(--gold);
+    }
+
     .extras {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -830,6 +978,7 @@
           </ul>
         </div>
         <div class="quick-actions" aria-label="빠른 이동">
+          <button class="action-chip primary overview-trigger" type="button" aria-haspopup="dialog">🧭 한눈에</button>
           <a class="action-chip primary" href="#daily-plan">📍 일정</a>
           <a class="action-chip" href="https://www.google.com/maps/search/?api=1&query=Comfort+Inn+Tokyo+Roppongi" target="_blank" rel="noreferrer">🏨 숙소</a>
           <a class="action-chip" href="https://www.google.com/maps/dir/?api=1&origin=Narita+Airport+Terminal+1&destination=Tokyo+Station&travelmode=transit" target="_blank" rel="noreferrer">✈️ 공항</a>
@@ -864,6 +1013,21 @@
       <div id="day-panels"></div>
     </section>
   </main>
+
+  <div class="overview-modal" id="overview-modal" role="dialog" aria-modal="true" aria-label="여행 동선 한눈에보기" hidden>
+    <div class="overview-header">
+      <div class="overview-title">
+        <strong>여행 동선 한눈에보기</strong>
+        <span>좌우로 넘겨서 Day별 카드 확인</span>
+      </div>
+      <button class="overview-close" type="button" aria-label="한눈에보기 닫기">×</button>
+    </div>
+    <div class="overview-track" tabindex="0" aria-label="한눈에보기 이미지카드"></div>
+    <div class="overview-footer">
+      <div class="overview-counter" aria-live="polite">1 / 5</div>
+      <div class="overview-dots" aria-label="카드 위치"></div>
+    </div>
+  </div>
 
   <template id="day-panel-template">
     <article class="day-panel" role="tabpanel">
@@ -1110,7 +1274,7 @@
             name: "해리포터 스튜디오",
             action: "예약 시간에 맞춰 입장.",
             time: "10:00",
-            prepare: "QR 바우처 · 신분증",
+            prepare: "바우처 · 신분증",
             caution: "09:40 도착 목표",
             tip: "재입장 불가",
             mapUrl: maps.harry,
@@ -1301,6 +1465,23 @@
     const tabsRoot = document.querySelector("#day-tabs");
     const panelsRoot = document.querySelector("#day-panels");
     const panelTemplate = document.querySelector("#day-panel-template");
+    const overviewTrigger = document.querySelector(".overview-trigger");
+    const overviewModal = document.querySelector("#overview-modal");
+    const overviewTrack = overviewModal.querySelector(".overview-track");
+    const overviewClose = overviewModal.querySelector(".overview-close");
+    const overviewCounter = overviewModal.querySelector(".overview-counter");
+    const overviewDots = overviewModal.querySelector(".overview-dots");
+    const overviewCards = [
+      ["개요", "assets/cards/overview.svg"],
+      ["Day 1", "assets/cards/day1.svg"],
+      ["Day 2", "assets/cards/day2.svg"],
+      ["Day 3", "assets/cards/day3.svg"],
+      ["Day 4", "assets/cards/day4.svg"]
+    ];
+    let overviewInitialized = false;
+    let overviewPreloaded = false;
+    let overviewScrollTimer = 0;
+    let overviewLastFocus = null;
 
     function createFact(label, value, type = "") {
       if (!value) return null;
@@ -1313,6 +1494,96 @@
       factValue.textContent = value;
       fact.append(factLabel, factValue);
       return fact;
+    }
+
+    function preloadOverviewCard() {
+      if (overviewPreloaded) return;
+      overviewPreloaded = true;
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = overviewCards[0][1];
+      document.head.append(link);
+    }
+
+    function setOverviewIndex(index, shouldScroll = false) {
+      const safeIndex = Math.max(0, Math.min(overviewCards.length - 1, index));
+      overviewCounter.textContent = `${safeIndex + 1} / ${overviewCards.length}`;
+      overviewDots.querySelectorAll(".overview-dot").forEach((dot, dotIndex) => {
+        dot.classList.toggle("active", dotIndex === safeIndex);
+        dot.setAttribute("aria-current", dotIndex === safeIndex ? "true" : "false");
+      });
+
+      if (shouldScroll) {
+        const slide = overviewTrack.children[safeIndex];
+        if (slide) {
+          const targetLeft = slide.offsetLeft - (overviewTrack.clientWidth - slide.offsetWidth) / 2;
+          overviewTrack.scrollTo({ left: targetLeft, behavior: "smooth" });
+        }
+      }
+    }
+
+    function initializeOverviewCards() {
+      if (overviewInitialized) return;
+      overviewInitialized = true;
+
+      overviewCards.forEach(([label, src], index) => {
+        const slide = document.createElement("figure");
+        slide.className = "overview-slide";
+        const card = document.createElement("object");
+        card.data = src;
+        card.type = "image/svg+xml";
+        card.setAttribute("aria-label", `${label} 여행 동선 한눈에보기 카드`);
+        slide.append(card);
+        overviewTrack.append(slide);
+
+        const dot = document.createElement("button");
+        dot.className = "overview-dot";
+        dot.type = "button";
+        dot.setAttribute("aria-label", `${label} 카드 보기`);
+        dot.addEventListener("click", () => setOverviewIndex(index, true));
+        overviewDots.append(dot);
+      });
+
+      setOverviewIndex(0);
+    }
+
+    function openOverview() {
+      overviewLastFocus = document.activeElement;
+      initializeOverviewCards();
+      overviewModal.hidden = false;
+      overviewModal.classList.add("is-open");
+      document.body.classList.add("overview-locked");
+      requestAnimationFrame(() => {
+        overviewTrack.scrollTo({ left: 0, behavior: "instant" });
+        setOverviewIndex(0);
+        overviewClose.focus({ preventScroll: true });
+      });
+    }
+
+    function closeOverview() {
+      overviewModal.classList.remove("is-open");
+      overviewModal.hidden = true;
+      document.body.classList.remove("overview-locked");
+      overviewLastFocus?.focus?.({ preventScroll: true });
+    }
+
+    function syncOverviewFromScroll() {
+      window.clearTimeout(overviewScrollTimer);
+      overviewScrollTimer = window.setTimeout(() => {
+        const center = overviewTrack.scrollLeft + overviewTrack.clientWidth / 2;
+        let nearestIndex = 0;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        [...overviewTrack.children].forEach((slide, index) => {
+          const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+          const distance = Math.abs(slideCenter - center);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
+          }
+        });
+        setOverviewIndex(nearestIndex);
+      }, 80);
     }
 
     function setMapCaption(panel, title, subtitle, url) {
@@ -1594,6 +1865,18 @@
       const tab = event.target.closest(".tab");
       if (!tab) return;
       activate(tab.dataset.day);
+    });
+
+    overviewTrigger.addEventListener("pointerenter", preloadOverviewCard, { once: true });
+    overviewTrigger.addEventListener("touchstart", preloadOverviewCard, { once: true, passive: true });
+    overviewTrigger.addEventListener("click", openOverview);
+    overviewClose.addEventListener("click", closeOverview);
+    overviewTrack.addEventListener("scroll", syncOverviewFromScroll, { passive: true });
+    overviewModal.addEventListener("click", (event) => {
+      if (event.target === overviewModal) closeOverview();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !overviewModal.hidden) closeOverview();
     });
 
     const initialDay = location.hash.replace("#", "");
