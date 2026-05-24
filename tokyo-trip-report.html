@@ -775,8 +775,7 @@
       scroll-snap-stop: always;
     }
 
-    .overview-slide img,
-    .overview-slide object {
+    .overview-slide img {
       display: block;
       width: 100%;
       max-height: 100%;
@@ -785,10 +784,6 @@
       background: #f8ead7;
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
       object-fit: contain;
-    }
-
-    .overview-slide object {
-      pointer-events: none;
     }
 
     .overview-footer {
@@ -1472,11 +1467,11 @@
     const overviewCounter = overviewModal.querySelector(".overview-counter");
     const overviewDots = overviewModal.querySelector(".overview-dots");
     const overviewCards = [
-      ["개요", "assets/cards/overview.svg"],
-      ["Day 1", "assets/cards/day1.svg"],
-      ["Day 2", "assets/cards/day2.svg"],
-      ["Day 3", "assets/cards/day3.svg"],
-      ["Day 4", "assets/cards/day4.svg"]
+      ["개요", "assets/generated-cards/overview.webp"],
+      ["Day 1", "assets/generated-cards/day1.webp"],
+      ["Day 2", "assets/generated-cards/day2.webp"],
+      ["Day 3", "assets/generated-cards/day3.webp"],
+      ["Day 4", "assets/generated-cards/day4.webp"]
     ];
     let overviewInitialized = false;
     let overviewPreloaded = false;
@@ -1530,10 +1525,11 @@
       overviewCards.forEach(([label, src], index) => {
         const slide = document.createElement("figure");
         slide.className = "overview-slide";
-        const card = document.createElement("object");
-        card.data = src;
-        card.type = "image/svg+xml";
-        card.setAttribute("aria-label", `${label} 여행 동선 한눈에보기 카드`);
+        const card = document.createElement("img");
+        card.src = src;
+        card.alt = `${label} 여행 동선 한눈에보기 카드`;
+        card.decoding = "async";
+        card.loading = index === 0 ? "eager" : "lazy";
         slide.append(card);
         overviewTrack.append(slide);
 
