@@ -1212,7 +1212,7 @@
             icon: "walk",
             name: "고쿄",
             action: "황궁 주변을 천천히 걷기.",
-            caution: "날씨와 체력 보고 진행",
+            caution: "날씨와 시간 보고 진행",
             tip: "사진보다 첫날 컨디션 우선",
             photo: "assets/place-photos/kokyo.webp",
             photoAlt: "고쿄 산책 구간 이미지",
@@ -1222,9 +1222,9 @@
           {
             icon: "cafe",
             name: "카페 다이닝 사호",
-            action: "도쿄타워 전 쉬어가는 지점.",
+            action: "도쿄타워 전 식사와 카페 타임.",
             caution: "영업시간 확인",
-            tip: "피곤하면 여기서 바로 숙소 복귀",
+            tip: "이후 동선은 도쿄타워 방향으로 연결",
             photo: "assets/place-photos/saho.webp",
             photoAlt: "카페 다이닝 사호 주변 이미지",
             mapUrl: maps.saho,
@@ -1313,9 +1313,9 @@
           {
             icon: "hotel",
             name: "숙소 복귀",
-            action: "시부야에서 롯폰기로 돌아와 휴식.",
+            action: "시부야에서 롯폰기로 돌아와 하루 마무리.",
             caution: "시부야 저녁 혼잡 가능",
-            tip: "다음날 자유일정이라 무리하지 않기",
+            tip: "다음날 일정 전 만나는 시간만 확인",
             photo: "assets/place-photos/hotel-day2.webp",
             photoAlt: "숙소 복귀와 야경 이미지",
             mapUrl: maps.hotel,
@@ -1334,8 +1334,8 @@
         date: "6/1 월",
         title: "자유일정",
         routeImage: "assets/generated-cards/day3.webp",
-        routeImageAlt: "Day 3 자유일정 동선을 A팀과 B팀 흐름으로 정리한 카드",
-        narrative: "셋째 날은 각자 취향대로 도쿄를 즐기는 자유여행 날. 세부 코스는 비공개로 두고, 흐름만 숙소 출발과 복귀 기준으로 확인한다.",
+        routeImageAlt: "Day 3 자유일정 흐름을 쇼핑, 카페, 산책 이미지로 정리한 카드",
+        narrative: "셋째 날은 각자 취향대로 도쿄를 즐기는 자유여행 날.",
         times: [["오전", "숙소 출발"], ["낮", "자유일정"], ["저녁", "숙소 복귀"]],
         route: ["숙소", "자유일정", "숙소"],
         routeActions: [
@@ -1364,10 +1364,10 @@
           {
             icon: "cafe",
             name: "자유일정",
-            action: "쇼핑, 카페, 산책, 휴식 중 취향대로 선택.",
+            action: "쇼핑, 카페, 산책 중 취향대로 선택.",
             time: "낮",
-            caution: "세부 일정은 비공개",
-            tip: "가볍게 자유롭게, 무리하지 않기",
+            caution: "만나는 시간 확인",
+            tip: "각자 취향대로 자유롭게",
             photo: "assets/place-photos/day3-free.webp",
             photoAlt: "쇼핑, 카페, 산책을 상징하는 자유일정 이미지",
             mapUrl: maps.hotel,
@@ -1381,14 +1381,14 @@
             caution: "복귀 시간 공유",
             tip: "다음날 귀국 준비까지 같이 정리",
             photo: "assets/place-photos/day3-return.webp",
-            photoAlt: "숙소 복귀와 휴식 이미지",
+            photoAlt: "숙소 복귀 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           }
         ],
         extras: [
           ["오늘의 포인트", "Day 3는 자유일정. 각자 취향대로 도쿄를 즐기고 저녁에 다시 모인다."],
-          ["주의", "세부 동선은 비공개 일정으로 페이지에는 노출하지 않는다."]
+          ["만나는 시간", "출발 전 각자 확인하고 움직이기."]
         ]
       },
       {
@@ -1439,7 +1439,7 @@
           {
             icon: "cafe",
             name: "네즈 카페",
-            action: "공항 이동 전 쉬어가기.",
+            action: "공항 이동 전 티타임.",
             caution: "오래 머물지 않기",
             tip: "공항 도착 목표를 먼저 보기",
             photo: "assets/place-photos/nezu-cafe.webp",
