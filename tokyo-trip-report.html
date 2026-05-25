@@ -331,27 +331,6 @@
       padding: clamp(18px, 3vw, 26px);
     }
 
-    .day-title-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .day-kicker {
-      color: var(--green);
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    .day-hero h2 {
-      margin-bottom: 0;
-      font-size: clamp(28px, 5vw, 44px);
-      letter-spacing: -0.045em;
-    }
-
     .narrative {
       margin: 0 0 16px;
       color: #39473f;
@@ -388,34 +367,21 @@
     }
 
     .route-flow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
+      position: relative;
+      overflow: hidden;
       margin: 0 0 14px;
-      padding: 13px;
-      border: 1px dashed rgba(34, 116, 85, 0.24);
-      border-radius: 20px;
-      background: rgba(223, 242, 223, 0.40);
+      border: 1px solid rgba(21, 32, 28, 0.10);
+      border-radius: 24px;
+      background: #f8ead7;
+      box-shadow: 0 18px 42px rgba(37, 52, 45, 0.14);
     }
 
-    .route-node {
-      display: inline-flex;
-      align-items: center;
-      min-height: 36px;
-      padding: 7px 11px;
-      border: 1px solid rgba(21, 32, 28, 0.09);
-      border-radius: 999px;
-      background: #fff;
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 900;
-      box-shadow: 0 8px 14px rgba(37, 52, 45, 0.06);
-    }
-
-    .route-arrow {
-      color: var(--green);
-      font-weight: 900;
+    .route-image {
+      display: block;
+      width: 100%;
+      max-height: min(70vh, 760px);
+      object-fit: contain;
+      background: #f8ead7;
     }
 
     .route-actions {
@@ -492,11 +458,22 @@
       position: relative;
       display: block;
       width: 100%;
-      padding: 16px;
+      padding: 10px 10px 16px;
       color: inherit;
       text-align: left;
       cursor: pointer;
       transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+
+    .place-card-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      margin-bottom: 12px;
+      border-radius: 18px;
+      background: var(--sand);
+      object-fit: cover;
+      box-shadow: inset 0 0 0 1px rgba(21, 32, 28, 0.08);
     }
 
     .place-card.active {
@@ -626,9 +603,23 @@
     .map-card iframe {
       display: block;
       width: 100%;
-      min-height: 300px;
+      min-height: 180px;
       border: 0;
       background: var(--sand);
+    }
+
+    .mini-map {
+      border-top: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.76);
+    }
+
+    .mini-map summary {
+      min-height: 46px;
+      padding: 12px 14px;
+      color: var(--green-dark);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
     }
 
     .map-caption {
@@ -659,8 +650,26 @@
 
     .selected-place-panel {
       display: grid;
-      gap: 9px;
-      padding: 0 14px 14px;
+      gap: 11px;
+      padding: 14px;
+    }
+
+    .detail-heading {
+      display: grid;
+      gap: 4px;
+    }
+
+    .detail-heading h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .detail-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
     }
 
     .selected-place-panel .place-facts {
@@ -951,11 +960,6 @@
         grid-template-columns: 1fr;
       }
 
-      .route-arrow {
-        justify-self: center;
-        transform: rotate(90deg);
-      }
-
       .route-actions {
         display: grid;
         grid-template-columns: 1fr;
@@ -1041,15 +1045,9 @@
   <template id="day-panel-template">
     <article class="day-panel" role="tabpanel">
       <section class="day-hero">
-        <div class="day-title-row">
-          <div>
-            <div class="day-kicker"></div>
-            <h2></h2>
-          </div>
-        </div>
+        <div class="route-flow"></div>
         <p class="narrative"></p>
         <div class="time-strip"></div>
-        <div class="route-flow"></div>
         <div class="route-actions"></div>
       </section>
 
@@ -1066,12 +1064,15 @@
           <div class="places"></div>
         </section>
         <aside class="map-card">
-          <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          <div class="map-caption">
-            <span></span>
-            <a class="source-link" target="_blank" rel="noreferrer">지도 ↗</a>
-          </div>
           <div class="selected-place-panel" aria-live="polite"></div>
+          <details class="mini-map">
+            <summary>지도도 보기</summary>
+            <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="map-caption">
+              <span></span>
+              <a class="source-link" target="_blank" rel="noreferrer">지도 ↗</a>
+            </div>
+          </details>
         </aside>
       </div>
 
@@ -1142,6 +1143,9 @@
         label: "Day 1",
         date: "5/30 토",
         title: "입국",
+        visibility: "public",
+        routeImage: "assets/generated-cards/day1.webp",
+        routeImageAlt: "Day 1 입국 동선을 번호와 지도 이미지로 정리한 카드",
         narrative: "입국 후 숙소에 짐을 두고, 도쿄역과 도쿄타워 권역을 가볍게 걷는 날.",
         times: [["07:25", "ICN 출발"], ["09:55", "NRT 도착"], ["저녁", "도쿄타워"]],
         route: ["나리타공항", "도쿄역", "숙소", "포켓몬DX", "고쿄", "도쿄타워", "숙소"],
@@ -1164,6 +1168,8 @@
             prepare: "여권 · 교통카드",
             caution: "입국심사와 수하물 시간 여유",
             tip: "일정이 밀리면 첫날 도심 일정을 줄이기",
+            photo: "assets/place-photos/narita-airport.webp",
+            photoAlt: "나리타공항 터미널 외관",
             mapUrl: maps.narita,
             embedUrl: maps.naritaEmbed
           },
@@ -1174,6 +1180,8 @@
             prepare: "NEX 시간 확인",
             caution: "도쿄역 안 이동이 길 수 있음",
             tip: "짐이 많으면 바로 숙소 이동 우선",
+            photo: "assets/place-photos/tokyo-station.webp",
+            photoAlt: "도쿄역 마루노우치 역사",
             mapUrl: maps.tokyoStation,
             embedUrl: maps.tokyoStationEmbed
           },
@@ -1184,6 +1192,8 @@
             prepare: "체크인/짐 보관 확인",
             caution: "무리하면 저녁 야경이 힘들어짐",
             tip: "Day 1, 2, 4의 복귀 기준점",
+            photo: "assets/place-photos/hotel-day1.webp",
+            photoAlt: "숙소 객실 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           },
@@ -1193,6 +1203,8 @@
             action: "도쿄역 근처에서 가볍게 쇼핑.",
             caution: "주말 혼잡 가능",
             tip: "기념품은 첫날 무겁지 않게",
+            photo: "assets/place-photos/pokemon-dx.webp",
+            photoAlt: "포켓몬 센터 도쿄 DX 실내",
             mapUrl: maps.pokemonDx,
             embedUrl: maps.pokemonDxEmbed
           },
@@ -1202,6 +1214,8 @@
             action: "황궁 주변을 천천히 걷기.",
             caution: "날씨와 체력 보고 진행",
             tip: "사진보다 첫날 컨디션 우선",
+            photo: "assets/place-photos/kokyo.webp",
+            photoAlt: "고쿄 산책 구간 이미지",
             mapUrl: maps.kokyo,
             embedUrl: maps.kokyoEmbed
           },
@@ -1211,6 +1225,8 @@
             action: "도쿄타워 전 쉬어가는 지점.",
             caution: "영업시간 확인",
             tip: "피곤하면 여기서 바로 숙소 복귀",
+            photo: "assets/place-photos/saho.webp",
+            photoAlt: "카페 다이닝 사호 주변 이미지",
             mapUrl: maps.saho,
             embedUrl: maps.sahoEmbed
           },
@@ -1220,6 +1236,8 @@
             action: "야경을 보며 첫날을 마무리.",
             caution: "가기 전 라이트업 확인",
             tip: "정각 2분 흰빛 반짝임을 노리기",
+            photo: "assets/place-photos/tokyo-tower-shiba.webp",
+            photoAlt: "시바공원에서 보이는 도쿄타워",
             mapUrl: maps.tokyoTower,
             embedUrl: maps.tokyoTowerEmbed,
             sources: [
@@ -1233,6 +1251,8 @@
             action: "도쿄타워를 밖에서 보기 좋은 산책 코스.",
             caution: "늦으면 짧게만 걷기",
             tip: "외부 야경만 봐도 충분",
+            photo: "assets/place-photos/shiba.webp",
+            photoAlt: "시바공원과 도쿄타워 이미지",
             mapUrl: maps.shiba,
             embedUrl: maps.shibaEmbed
           }
@@ -1247,6 +1267,9 @@
         label: "Day 2",
         date: "5/31 일",
         title: "고정",
+        visibility: "public",
+        routeImage: "assets/generated-cards/day2.webp",
+        routeImageAlt: "Day 2 해리포터와 시부야 스카이 동선을 번호와 지도 이미지로 정리한 카드",
         narrative: "해리포터를 보고 16:00에 시부야 스카이로 이동하는 예약 중심의 날.",
         times: [["09:40", "해리포터 도착"], ["10:00", "입장"], ["16:00", "시부야 스카이"]],
         route: ["숙소", "해리포터", "시부야 스카이", "숙소"],
@@ -1269,6 +1292,8 @@
             prepare: "바우처 · 신분증",
             caution: "09:40 도착 목표",
             tip: "재입장 불가",
+            photo: "assets/place-photos/harry-potter-studio.webp",
+            photoAlt: "해리포터 스튜디오 도쿄 입구",
             mapUrl: maps.harry,
             embedUrl: maps.harryEmbed
           },
@@ -1280,6 +1305,8 @@
             prepare: "예약 확인",
             caution: "이동 전 소요시간 재확인",
             tip: "날씨가 흐려도 예약 시간 기준",
+            photo: "assets/place-photos/shibuya-sky.webp",
+            photoAlt: "시부야 스카이 전망대와 시부야 풍경",
             mapUrl: maps.shibuyaSky,
             embedUrl: maps.shibuyaSkyEmbed
           },
@@ -1289,6 +1316,8 @@
             action: "시부야에서 롯폰기로 돌아와 휴식.",
             caution: "시부야 저녁 혼잡 가능",
             tip: "다음날 자유일정이라 무리하지 않기",
+            photo: "assets/place-photos/hotel-day2.webp",
+            photoAlt: "숙소 복귀와 야경 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           }
@@ -1304,6 +1333,8 @@
         visibility: "private",
         date: "6/1 월",
         title: "자유일정",
+        routeImage: "assets/generated-cards/day3.webp",
+        routeImageAlt: "Day 3 자유일정 동선을 A팀과 B팀 흐름으로 정리한 카드",
         narrative: "셋째 날은 각자 취향대로 도쿄를 즐기는 자유여행 날. 세부 코스는 비공개로 두고, 흐름만 숙소 출발과 복귀 기준으로 확인한다.",
         times: [["오전", "숙소 출발"], ["낮", "자유일정"], ["저녁", "숙소 복귀"]],
         route: ["숙소", "자유일정", "숙소"],
@@ -1325,6 +1356,8 @@
             prepare: "휴대폰 배터리 · 교통카드",
             caution: "서로 만나는 시간만 확인",
             tip: "2:2 또는 개인 취향대로 움직이기",
+            photo: "assets/place-photos/day3-start.webp",
+            photoAlt: "자유일정 시작 지점 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           },
@@ -1335,6 +1368,8 @@
             time: "낮",
             caution: "세부 일정은 비공개",
             tip: "가볍게 자유롭게, 무리하지 않기",
+            photo: "assets/place-photos/day3-free.webp",
+            photoAlt: "쇼핑, 카페, 산책을 상징하는 자유일정 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           },
@@ -1345,6 +1380,8 @@
             time: "저녁",
             caution: "복귀 시간 공유",
             tip: "다음날 귀국 준비까지 같이 정리",
+            photo: "assets/place-photos/day3-return.webp",
+            photoAlt: "숙소 복귀와 휴식 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           }
@@ -1359,6 +1396,9 @@
         label: "Day 4",
         date: "6/2 화",
         title: "귀국",
+        visibility: "public",
+        routeImage: "assets/generated-cards/day4.webp",
+        routeImageAlt: "Day 4 네즈와 공항 동선을 번호와 지도 이미지로 정리한 카드",
         narrative: "네즈 미술관을 가볍게 보고, 15:30-16:00까지 나리타공항에 도착하는 날.",
         times: [["오전", "체크아웃"], ["낮", "네즈"], ["15:30", "NRT 목표"]],
         route: ["숙소", "네즈 미술관", "네즈 카페", "도쿄역", "나리타공항"],
@@ -1380,6 +1420,8 @@
             prepare: "짐 보관 가능 여부",
             caution: "귀국일은 공항 시간이 우선",
             tip: "락커 대안도 생각해두기",
+            photo: "assets/place-photos/hotel-day4.webp",
+            photoAlt: "체크아웃 전 숙소 객실 이미지",
             mapUrl: maps.hotel,
             embedUrl: maps.hotelEmbed
           },
@@ -1389,6 +1431,8 @@
             action: "마지막 날 가볍게 관람.",
             caution: "영업시간 확인",
             tip: "일정 밀리면 과감히 짧게",
+            photo: "assets/place-photos/nezu-museum.webp",
+            photoAlt: "네즈 미술관 입구와 정원",
             mapUrl: maps.nezuMuseum,
             embedUrl: maps.nezuMuseumEmbed
           },
@@ -1398,6 +1442,8 @@
             action: "공항 이동 전 쉬어가기.",
             caution: "오래 머물지 않기",
             tip: "공항 도착 목표를 먼저 보기",
+            photo: "assets/place-photos/nezu-cafe.webp",
+            photoAlt: "네즈 카페와 정원 이미지",
             mapUrl: maps.nezuCafe,
             embedUrl: maps.nezuCafeEmbed
           },
@@ -1409,6 +1455,8 @@
             prepare: "여권 · 항공권",
             caution: "도쿄역 NEX 시간 확인",
             tip: "쇼핑은 공항 여유가 있을 때만",
+            photo: "assets/place-photos/narita-airport.webp",
+            photoAlt: "나리타공항 터미널 외관",
             mapUrl: maps.narita,
             embedUrl: maps.naritaEmbed
           }
@@ -1583,6 +1631,15 @@
       const detailPanel = panel.querySelector(".selected-place-panel");
       detailPanel.innerHTML = "";
 
+      const heading = document.createElement("div");
+      heading.className = "detail-heading";
+      const title = document.createElement("h3");
+      title.textContent = place.name;
+      const action = document.createElement("p");
+      action.textContent = place.action;
+      heading.append(title, action);
+      detailPanel.append(heading);
+
       const facts = document.createElement("div");
       facts.className = "place-facts";
       [
@@ -1597,7 +1654,7 @@
       } else {
         const empty = document.createElement("p");
         empty.className = "selected-empty";
-        empty.textContent = "이 장소는 지도만 확인하면 됩니다.";
+        empty.textContent = "이 장소는 대표 이미지만 확인하면 됩니다.";
         detailPanel.append(empty);
       }
 
@@ -1680,6 +1737,16 @@
       card.dataset.mapUrl = place.mapUrl;
       card.dataset.embedUrl = place.embedUrl || "";
 
+      if (place.photo) {
+        const photo = document.createElement("img");
+        photo.className = "place-card-photo";
+        photo.src = place.photo;
+        photo.alt = place.photoAlt || `${place.name} 대표 이미지`;
+        photo.loading = "lazy";
+        photo.decoding = "async";
+        card.append(photo);
+      }
+
       const top = document.createElement("div");
       top.className = "place-top";
       const icon = document.createElement("div");
@@ -1729,8 +1796,6 @@
       panel.id = day.id;
       panel.setAttribute("aria-labelledby", tab.id);
       if (index === 0) panel.classList.add("active");
-      panel.querySelector(".day-kicker").textContent = day.date;
-      panel.querySelector(".day-hero h2").textContent = `${day.label} · ${day.title}`;
       panel.querySelector(".narrative").textContent = day.narrative;
 
       const timeStrip = panel.querySelector(".time-strip");
@@ -1742,18 +1807,19 @@
       });
 
       const routeFlow = panel.querySelector(".route-flow");
-      day.route.forEach((node, nodeIndex) => {
-        const routeNode = document.createElement("span");
-        routeNode.className = "route-node";
-        routeNode.textContent = node;
-        routeFlow.append(routeNode);
-        if (nodeIndex < day.route.length - 1) {
-          const arrow = document.createElement("span");
-          arrow.className = "route-arrow";
-          arrow.textContent = "→";
-          routeFlow.append(arrow);
-        }
-      });
+      if (day.routeImage) {
+        const routeImage = document.createElement("img");
+        routeImage.className = "route-image";
+        routeImage.src = day.routeImage;
+        routeImage.alt = day.routeImageAlt || `${day.label} 동선 이미지`;
+        routeImage.loading = index === 0 ? "eager" : "lazy";
+        routeImage.decoding = "async";
+        routeFlow.append(routeImage);
+      }
+      const routeText = document.createElement("p");
+      routeText.className = "screen-reader";
+      routeText.textContent = day.route.join(" → ");
+      routeFlow.append(routeText);
 
       const routeActions = panel.querySelector(".route-actions");
       day.routeActions.forEach(([label, url, primary]) => {
