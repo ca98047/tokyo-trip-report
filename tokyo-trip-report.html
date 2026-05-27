@@ -247,6 +247,65 @@
       font-weight: 700;
     }
 
+    .countdown-board {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      align-items: stretch;
+      padding: 8px;
+      border: 1px solid rgba(34, 116, 85, 0.16);
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(223, 242, 223, 0.68), rgba(255, 252, 244, 0.76)),
+        radial-gradient(circle at 12% 10%, rgba(240, 184, 75, 0.16), transparent 14rem);
+      box-shadow: 0 10px 24px rgba(37, 52, 45, 0.08);
+    }
+
+    .countdown-card {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 4px 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid rgba(21, 32, 28, 0.09);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.38);
+    }
+
+    .countdown-icon {
+      grid-row: span 2;
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(34, 116, 85, 0.10);
+      font-size: 18px;
+    }
+
+    .countdown-card small {
+      display: block;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .countdown-value {
+      display: block;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(19px, 3vw, 26px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+
     .tabs-shell {
       position: sticky;
       top: 0;
@@ -943,6 +1002,15 @@
         grid-template-columns: 1fr;
       }
 
+      .countdown-board {
+        grid-template-columns: 1fr;
+        padding: 7px;
+      }
+
+      .countdown-value {
+        font-size: 22px;
+      }
+
       .tabs-shell {
         margin-left: -9px;
         margin-right: -9px;
@@ -997,6 +1065,19 @@
           <a class="action-chip" href="https://www.google.com/maps/dir/?api=1&origin=Narita+Airport+Terminal+1&destination=Tokyo+Station&travelmode=transit" target="_blank" rel="noreferrer">✈️ 공항</a>
           <a class="action-chip" href="https://www.google.com/maps/search/?api=1&query=Roppongi+Tokyo" target="_blank" rel="noreferrer">🗺️ 지도</a>
         </div>
+      </div>
+
+      <div class="countdown-board" aria-label="출국 카운트다운">
+        <article class="countdown-card">
+          <span class="countdown-icon" aria-hidden="true">✈️</span>
+          <small>LJ201 이륙까지</small>
+          <strong class="countdown-value" data-countdown="departure" aria-live="polite">계산 중</strong>
+        </article>
+        <article class="countdown-card">
+          <span class="countdown-icon" aria-hidden="true">🛬</span>
+          <small>도쿄에 닿기까지</small>
+          <strong class="countdown-value" data-countdown="arrival" aria-live="polite">계산 중</strong>
+        </article>
       </div>
 
       <div class="mini-card" aria-label="고정 정보">
@@ -1488,6 +1569,36 @@
     let overviewPreloaded = false;
     let overviewScrollTimer = 0;
     let overviewLastFocus = null;
+    const countdownTargets = {
+      departure: {
+        at: new Date("2026-05-30T07:25:00+09:00"),
+        done: "이륙 완료"
+      },
+      arrival: {
+        at: new Date("2026-05-30T09:55:00+09:00"),
+        done: "도쿄 도착"
+      }
+    };
+
+    function formatCountdown(ms) {
+      if (ms <= 0) return null;
+      const totalSeconds = Math.floor(ms / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const pad = (value) => String(value).padStart(2, "0");
+      return `D-${days} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    function updateCountdowns() {
+      const now = new Date();
+      document.querySelectorAll("[data-countdown]").forEach((item) => {
+        const target = countdownTargets[item.dataset.countdown];
+        if (!target) return;
+        item.textContent = formatCountdown(target.at - now) || target.done;
+      });
+    }
 
     function createFact(label, value, type = "") {
       if (!value) return null;
@@ -1885,6 +1996,8 @@
     }
 
     tripDays.forEach(renderDay);
+    updateCountdowns();
+    window.setInterval(updateCountdowns, 1000);
 
     tabsRoot.addEventListener("click", (event) => {
       const tab = event.target.closest(".tab");
